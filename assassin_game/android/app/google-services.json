@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "287905421370",
+    "firebase_url": "https://assassingame-c59a6.firebaseio.com",
+    "project_id": "assassingame-c59a6",
+    "storage_bucket": "assassingame-c59a6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:287905421370:android:647993511d1de7d34bbd03",
+        "android_client_info": {
+          "package_name": "com.manthi.assassingame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "287905421370-dia6ufmhib59kau2pouq38ruman1bclt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcR2_KkUxXt1nP62UUKN9bCTDLP3vaMfk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "287905421370-dia6ufmhib59kau2pouq38ruman1bclt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
