@@ -40,7 +40,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: SlidingUpPanel(
         color: Colors.black,
-        minHeight: 60,
+        minHeight: 50,
+        maxHeight: 200,
         margin: EdgeInsets.symmetric(horizontal: 8),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.0),
@@ -48,18 +49,56 @@ class _HomePageState extends State<HomePage> {
         ),
         collapsed: Container(
           decoration: BoxDecoration(
-            color: Colors.green,
+            color: statusColor,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0),
               topRight: Radius.circular(20.0),
             ),
           ),
-          child: Center(child: Text("More")),
+          child: Center( child:Icon(Icons.arrow_drop_up, size: 50,)),
         ),
         panel: Center(
-          child: Text(
-            "This is the sliding Widget",
-            style: Theme.of(context).textTheme.display1,
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(Icons.drag_handle),
+              ),
+              user.isAlive()
+                  ? RaisedButton(
+                      color: Colors.red,
+                      disabledColor: Colors.blueGrey[800],
+                      child: Text("Target Eliminated"),
+                      onPressed: () {
+                        print("target eliminated");
+                        setState(() {
+                          user.eliminateTarget();
+                          statusColor = Colors.red;
+//                              user.isAlive() ? Colors.green : Colors.red;
+                        });
+                      },
+                    )
+                  : Container(),
+              RaisedButton(
+                color: statusColor,
+                disabledColor: Colors.blueGrey[800],
+                child: Text("View More Details"),
+                onPressed: () {
+                  print("More Details");
+                  Navigator.pushNamed(context, Details.route);
+                },
+              ),
+              RaisedButton(
+                color: statusColor,
+                disabledColor: Colors.blueGrey[800],
+                child: Text("Log out"),
+                onPressed: () {
+                  _auth.signOut();
+                  Navigator.popUntil(
+                      context, ModalRoute.withName(WelcomePage.route));
+                },
+              ),
+            ],
           ),
         ),
         body: Container(
@@ -75,38 +114,6 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   user.isAlive() ? 'Alive' : 'Eliminated',
                   style: Theme.of(context).textTheme.display2,
-                ),
-                user.isAlive()
-                    ? RaisedButton(
-                        color: Colors.red,
-                        disabledColor: Colors.blueGrey[800],
-                        child: Text("Target Eliminated"),
-                        onPressed: () {
-                          setState(() {
-                            user.eliminateTarget();
-                            statusColor =
-                                user.isAlive() ? Colors.green : Colors.red;
-                          });
-                        },
-                      )
-                    : Container(),
-                RaisedButton(
-                  color: Colors.black38,
-                  disabledColor: Colors.blueGrey[800],
-                  child: Text("View More Details"),
-                  onPressed: () {
-                    Navigator.pushNamed(context, Details.route);
-                  },
-                ),
-                RaisedButton(
-                  color: Colors.black38,
-                  disabledColor: Colors.blueGrey[800],
-                  child: Text("Log out"),
-                  onPressed: () {
-                    _auth.signOut();
-                    Navigator.popUntil(
-                        context, ModalRoute.withName(WelcomePage.route));
-                  },
                 ),
               ],
             ),
