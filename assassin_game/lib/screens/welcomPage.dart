@@ -7,6 +7,7 @@ import 'package:assassingame/componants/bigButton.dart';
 import 'loginScreen.dart';
 import 'homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:assassingame/user.dart';
 
 class WelcomePage extends StatelessWidget {
   static final route = "welcome";
@@ -15,8 +16,9 @@ class WelcomePage extends StatelessWidget {
   void checkStatus(context)async{
     final user = await _auth.currentUser();
     if(user != null){
-      Navigator.pushNamed(context, HomePage.route);
       print("User already logged in");
+      await User.initialize();
+      Navigator.pushNamed(context, HomePage.route);
     }
   }
 
@@ -27,44 +29,47 @@ class WelcomePage extends StatelessWidget {
       backgroundColor: Colors.black,
       body: Container(
         decoration: getBorder(Colors.purple),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Hero(
-                tag: 'face',
-                child: Icon(
-                  Icons.gps_fixed,
-                  color: Colors.purpleAccent,
-                  size: 60,
+        child: Padding(
+          padding: const EdgeInsets.all(50.0),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Hero(
+                  tag: 'face',
+                  child: Icon(
+                    Icons.gps_fixed,
+                    color: Colors.purpleAccent,
+                    size: 60,
+                  ),
                 ),
-              ),
-              SizedBox(height: 10,),
-              TextLiquidFill(
-                text: "Assassin",
-                waveColor: Colors.purpleAccent,
-                //boxBackgroundColor: Colors.redAccent,
-                textStyle: TextStyle(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
+                SizedBox(height: 10,),
+                TextLiquidFill(
+                  text: "Assassin",
+                  waveColor: Colors.purpleAccent,
+                  //boxBackgroundColor: Colors.redAccent,
+                  textStyle: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  boxHeight: 50.0,
                 ),
-                boxHeight: 50.0,
-              ),
-              BigButton(
-                buttonText: "Login",
-                onClick: (){
-                  print("tried to login");
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen(loggingIn: true,)));
-                },
-              ),
-              BigButton(
-                buttonText: "Register",
-                onClick: () {
-                  print("tried to Register");
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen(loggingIn: false,)));
-                },
-              )
-            ]),
+                BigButton(
+                  buttonText: "Login",
+                  onClick: (){
+                    print("tried to login");
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen(loggingIn: true,)));
+                  },
+                ),
+                BigButton(
+                  buttonText: "Register",
+                  onClick: () {
+                    print("tried to Register");
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen(loggingIn: false,)));
+                  },
+                )
+              ]),
+        ),
       ),
     );
   }

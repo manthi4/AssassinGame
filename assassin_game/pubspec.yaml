@@ -14,6 +14,7 @@ dependencies:
   firebase_auth: ^0.16.1
   cloud_firestore: ^0.13.6
   sliding_up_panel: ^1.0.2
+  cross_local_storage: ^1.1.0
 
 dev_dependencies:
   flutter_test:

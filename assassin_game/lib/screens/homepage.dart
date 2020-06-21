@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../user.dart';
@@ -18,108 +19,182 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var _auth = FirebaseAuth.instance;
   var loggedInUser;
-  User user = User();
-  Color statusColor = Colors.white;
+  Color statusColor = Colors.blue;
+  String selectedGameID = "not blank for debug purpose";
+  String newGameName = "";
 
-  void printCurrentU() async {
-    loggedInUser = await _auth.currentUser();
-    print(loggedInUser.email);
+  void grabGameID() async {
+    selectedGameID = await User.getSelectedGameID();
+    setState(() {});
+  }
+
+  void newGameID(ID) async {
+    await User.setSelectedGameID(gameID: ID);
+    setState(() {
+      selectedGameID = ID;
+    });
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    printCurrentU();
-    user.update();
-    statusColor = user.isAlive() ? Colors.green : Colors.red;
+//    User.initialize(); /// User should already be initialized before coming to this screen. Either directly on the welcome screen or on the login Screen if new User
+    grabGameID();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SlidingUpPanel(
-        color: Colors.black,
-        minHeight: 50,
-        maxHeight: 200,
-        margin: EdgeInsets.symmetric(horizontal: 8),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
-        ),
-        collapsed: Container(
-          decoration: BoxDecoration(
-            color: statusColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-            ),
-          ),
-          child: Center( child:Icon(Icons.arrow_drop_up, size: 50,)),
-        ),
-        panel: Center(
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(Icons.drag_handle),
+    print('Selected Game ID dug from device: $selectedGameID ');
+
+    return StreamBuilder<DocumentSnapshot>(
+        stream: User.gameDocStreamCreator(gameID: selectedGameID),
+        builder: (context, snapshot) {
+//          if (!snapshot.data.exists & ) {
+//            return Center(
+//              child: Text("Waiting for connection"),
+//            );
+//          }
+          var dta = snapshot.data;
+          bool alive =
+              snapshot.data.data["PlayerStatus"][User.userName()]["Alive"];
+          statusColor = alive ? Colors.green : Colors.red;
+
+          return Scaffold(
+            body: SlidingUpPanel(
+              color: Colors.black,
+              minHeight: 50,
+              maxHeight: 400,
+              margin: EdgeInsets.symmetric(horizontal: 8),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
               ),
-              user.isAlive()
-                  ? RaisedButton(
-                      color: Colors.red,
+              collapsed: Container(
+                /// This is the part when its down
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
+                ),
+                child: Center(
+                    child: Icon(
+                  Icons.arrow_drop_up,
+                  size: 50,
+                )),
+              ),
+              panel: Center(
+                /// This is the part when it slides up
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.drag_handle),
+                    ),
+                    true
+                        ? RaisedButton(
+                            color: Colors.red,
+                            disabledColor: Colors.blueGrey[800],
+                            child: Text("Target Eliminated"),
+                            onPressed: () {
+                              print("target eliminated");
+                              setState(() {
+                                User.eliminateTarget();
+                                statusColor = Colors.red;
+                              });
+                            },
+                          )
+                        : Container(),
+                    RaisedButton(
+                      color: statusColor,
                       disabledColor: Colors.blueGrey[800],
-                      child: Text("Target Eliminated"),
+                      child: Text("View More Details"),
                       onPressed: () {
-                        print("target eliminated");
-                        setState(() {
-                          user.eliminateTarget();
-                          statusColor = Colors.red;
-//                              user.isAlive() ? Colors.green : Colors.red;
-                        });
+                        print("More Details");
+                        Navigator.pushNamed(context, Details.route);
                       },
-                    )
-                  : Container(),
-              RaisedButton(
-                color: statusColor,
-                disabledColor: Colors.blueGrey[800],
-                child: Text("View More Details"),
-                onPressed: () {
-                  print("More Details");
-                  Navigator.pushNamed(context, Details.route);
-                },
-              ),
-              RaisedButton(
-                color: statusColor,
-                disabledColor: Colors.blueGrey[800],
-                child: Text("Log out"),
-                onPressed: () {
-                  _auth.signOut();
-                  Navigator.popUntil(
-                      context, ModalRoute.withName(WelcomePage.route));
-                },
-              ),
-            ],
-          ),
-        ),
-        body: Container(
-          decoration: getBorder(statusColor),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Hero(
-                  tag: 'face',
-                  child: getFace(alive: user.isAlive()),
+                    ),
+                    RaisedButton(
+                      color: statusColor,
+                      disabledColor: Colors.blueGrey[800],
+                      child: Text("Log out"),
+                      onPressed: () {
+                        _auth.signOut();
+                        Navigator.popUntil(
+                            context, ModalRoute.withName(WelcomePage.route));
+                      },
+                    ),
+
+                    TextField(
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: (value) {
+                        newGameName = value;
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'New Game Name',
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 20.0),
+                      ),
+                    ),
+                    RaisedButton(
+                      child: Text("Create"),
+                      onPressed: () async {
+                        if (newGameName != "") {
+                          String id =
+                              await User.createNewGame(gameName: newGameName);
+                          newGameID(id);
+                        } else {
+                          print("Need to Name your game!");
+                        }
+                      },
+                    ),
+                  ],
                 ),
-                Text(
-                  user.isAlive() ? 'Alive' : 'Eliminated',
-                  style: Theme.of(context).textTheme.display2,
+              ),
+              body: Container(
+                decoration: getBorder(statusColor),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Hero(
+                        tag: 'face',
+                        child: getFace(alive: alive),
+                      ),
+                      Text(
+                        true ? 'Alive' : 'Eliminated',
+                        style: Theme.of(context).textTheme.display2,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            "Current game:  ",
+                          ),
+                          DropdownButton(
+                            value: User.getGameName(gameID: selectedGameID),
+                            icon: Icon(Icons.arrow_drop_down),
+                            onChanged: (newValue) {
+                              newGameID(User.getGameID(gameName: newValue));
+                            },
+                            items: User.getGameNames().map((e) {
+                              return DropdownMenuItem(
+                                value: e,
+                                child: Text(e),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
+        });
   }
 }

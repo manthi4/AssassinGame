@@ -10,7 +10,7 @@ class Details extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: getBorder(user.isAlive() ? Colors.green : Colors.red),
+        decoration: getBorder(true ? Colors.green : Colors.red),
         child: Center(
           child: Column(
             children: <Widget>[
@@ -19,7 +19,7 @@ class Details extends StatelessWidget {
                 children: <Widget>[
                   Hero(
                     tag: 'face',
-                    child: getFace(alive: user.isAlive()),
+                    child: getFace(alive: true),
                   ),
                   Expanded(
                     child: Card(

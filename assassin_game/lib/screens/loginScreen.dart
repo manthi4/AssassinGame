@@ -3,6 +3,7 @@ import 'package:assassingame/componants/bigButton.dart';
 import 'package:assassingame/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'homepage.dart';
+import 'package:assassingame/user.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -22,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       if(user != null){
+        await User.initialize();
         Navigator.pushNamed(context, HomePage.route);
       }
     }catch(e){
@@ -34,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       if(user != null){
+        await User.initialize();
         Navigator.pushNamed(context, HomePage.route);
       }
     }catch(e){
@@ -60,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     size: 60,
                   ),
                 ),
-                SizedBox(height: 100),
+                Flexible(child: SizedBox(height: 100)),
                 TextField(
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) {
