@@ -29,19 +29,20 @@ class User {
 //    await getPlayerData();
 //  }
 
-  static void initialize() async {
+  static Future<void> initialize() async {
+//    var waitList = <Future<void>>[];
     await getLoginData();
     await getUserData();
     print("User Initialized");
   }
 
-  static void getLoginData() async {
+  static Future<void> getLoginData() async {
     currentUser = await _auth.currentUser();
   }
 
   /// The getUserData actually doesn't need a stream.
   /// But keep in mind to call it once if the Userdoc is ever updated (which would happen through the app). Like when the User adds themselves to a new game.
-  static void getUserData() async {
+  static Future<void> getUserData() async {
     var userEmail = currentUser.email;
     print("userEmail: $userEmail");
     await _fstore
@@ -55,20 +56,29 @@ class User {
           _userData = thing.documents.single.data;
           _userID = thing.documents.single.documentID;
           print("UserID = $_userID");
+        }else{
+          print("userData not found!");
         }
       },
     );
   }
 
   static String userName() {
+    var username = _userData["Username"];
+    var wut = true;
     return _userData["Username"];
   }
 
-  static Iterable<String> getGameNames() {
-    Map hopefullyGames = _userData["Games"];
-    Iterable hopefullykeys = _userData["Games"].keys;
-    var hopefullyList = hopefullykeys.toList();
+  static List<String> getGameNames() {
+//    var userd = _userData;
+//    Map hopefullyGames = _userData["Games"];
+//    Iterable hopefullykeys = _userData["Games"].keys;
+//    var hopefullyList = hopefullykeys.toList();
     return _userData["Games"].keys.toList();
+  }
+
+  static Map getGames(){
+    return _userData["Games"];
   }
 
   static String getGameID({@required gameName}) {
@@ -103,8 +113,13 @@ class User {
 
   static Future<String> getSelectedGameID() async {
     LocalStorageInterface onDevice = await LocalStorage.getInstance();
-    String ID = await onDevice.getString('LastActiveG') ?? "";
-    return ID;
+    String ID = await onDevice.getString("LastActiveG") ?? "";
+    List activeGames = _userData["Games"].values.toList();
+    if (_userData["Games"].values.toList().contains(ID)) {
+      return ID;
+    }else {
+      return "";
+    }
   }
 
   static Future<String> setSelectedGameID({@required gameID}) async {
@@ -141,6 +156,10 @@ class User {
 
     getUserData();
     return newGameDocRef.documentID;
+  }
+
+  static Future<String> joinGame({@required gameName}){
+
   }
 
   static void eliminateTarget() {

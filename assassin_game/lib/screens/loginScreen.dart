@@ -4,7 +4,7 @@ import 'package:assassingame/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'homepage.dart';
 import 'package:assassingame/user.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool loggingIn;
@@ -15,31 +15,38 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
-  var email;
-  var password;
+  final Firestore _fstore = Firestore.instance;
+  String email;
+  String password;
+  String userName;
 
   void login() async {
     try {
       final user = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      if(user != null){
+      if (user != null) {
         await User.initialize();
         Navigator.pushNamed(context, HomePage.route);
       }
-    }catch(e){
+    } catch (e) {
       print(e);
     }
   }
 
   void register() async {
     try {
-      final user = await _auth.createUserWithEmailAndPassword(
+      final AuthResult user = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      if(user != null){
-        await User.initialize();
-        Navigator.pushNamed(context, HomePage.route);
+      if (user != null) {
+        await _fstore.collection("Users").document(user.user.uid).setData({
+          "Email" : user.user.email,
+          "Games": {},
+          "Username": userName,
+        }).then((value) async {
+          await User.initialize();
+        }).then((value) => Navigator.pushNamed(context, HomePage.route));
       }
-    }catch(e){
+    } catch (e) {
       print(e);
     }
   }
@@ -79,6 +86,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   decoration: TextFieldStyle,
                 ),
+                SizedBox(height: 20),
+                widget.loggingIn
+                    ? Container()
+                    : TextField(
+                        obscureText: true,
+                        onChanged: (value) {
+                          userName = value;
+                        },
+                        decoration:
+                            TextFieldStyle.copyWith(hintText: "Username"),
+                      ),
                 SizedBox(height: 20),
                 widget.loggingIn
                     ? BigButton(
