@@ -7,6 +7,9 @@ import 'detailsPage.dart';
 import 'welcomPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:assassingame/componants/SelectGamePagelet.dart';
+import 'package:assassingame/componants/CreateGameComponent.dart';
+import 'package:assassingame/componants/JoinGameComponent.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -21,39 +24,28 @@ class _HomePageState extends State<HomePage> {
   var loggedInUser;
   Color statusColor = Colors.blue;
   String selectedGameID = "";
-  String newGameName = "";
+//  String selectedGameName;
 
-  void grabGameID() async {
+  Future<void> grabGameID() async {
     String ID = await User.getSelectedGameID();
-    if(ID != "") {
+    if (ID != "") {
       setState(() {
         selectedGameID = ID;
       });
     }
   }
 
-  void newGameID(ID) async {
-    await User.setSelectedGameID(gameID: ID);
-    setState(() {
-      selectedGameID = ID;
-    });
+  Future<void> updateGameID(ID) async {
+    if (ID != "") {
+      await User.setSelectedGameID(gameID: ID);
+      setState(() {
+        selectedGameID = ID;
+      });
+    }else{
+      print("Invalid, blank ID passes into updateGameID");
+    }
   }
 
-
-  List<Widget> getGameList() {
-    List<Widget> widgetList;
-    widgetList = User.getGameNames().map((e){
-      return ListTile(
-        leading: Icon(Icons.games),
-        title: Text(e),
-        onTap: (){
-          newGameID(User.getGameID(gameName: e));
-        },
-      );
-    }).toList();
-
-    return widgetList;
-  }
 
   @override
   void initState() {
@@ -67,46 +59,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     print('Selected Game ID dug from device: $selectedGameID ');
     if (selectedGameID == "") {
-      List<Widget> gamesWidgetList = getGameList();
-
-      return Scaffold(
-        body: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              gamesWidgetList.isNotEmpty
-                  ? Flexible(
-                    child: ListView(
-                        children: gamesWidgetList,
-                      ),
-                  )
-                  : Text("You are not part of any games yet"),
-              TextField(
-                onChanged: (value) {
-                  newGameName = value;
-                },
-                decoration: InputDecoration(
-                  hintText: 'New Game Name',
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                ),
-              ),
-              RaisedButton(
-                child: Text("Create"),
-                onPressed: () async {
-                  if (newGameName != "") {
-                    String id = await User.createNewGame(gameName: newGameName);
-                    newGameID(id);
-                  } else {
-                    print("Need to Name your game!");
-                  }
-                },
-              ),
-            ],
-          ),
-        ),
-      );
+      return SelectGamePagelet(updateGameID: updateGameID);
     } else {
+
       return StreamBuilder<DocumentSnapshot>(
           stream: User.gameDocStreamCreator(gameID: selectedGameID),
           builder: (context, snapshot) {
@@ -120,29 +75,30 @@ class _HomePageState extends State<HomePage> {
                 snapshot.data.data["PlayerStatus"][User.userName()]["Alive"];
             statusColor = alive ? Colors.green : Colors.red;
 
+
             return Scaffold(
               body: SlidingUpPanel(
                 color: Colors.black,
-                minHeight: 50,
-                maxHeight: 400,
+                minHeight: 25,
+                maxHeight: 300,
                 margin: EdgeInsets.symmetric(horizontal: 8),
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
+                  topLeft: Radius.circular(10.0),
+                  topRight: Radius.circular(10.0),
                 ),
                 collapsed: Container(
                   /// This is the part when its down
                   decoration: BoxDecoration(
                     color: statusColor,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
+                      topLeft: Radius.circular(10.0),
+                      topRight: Radius.circular(10.0),
                     ),
                   ),
                   child: Center(
                       child: Icon(
                     Icons.arrow_drop_up,
-                    size: 50,
+                    size: 25,
                   )),
                 ),
                 panel: Center(
@@ -153,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Icon(Icons.drag_handle),
                       ),
-                      true
+                      alive
                           ? RaisedButton(
                               color: Colors.red,
                               disabledColor: Colors.blueGrey[800],
@@ -186,33 +142,19 @@ class _HomePageState extends State<HomePage> {
                               context, ModalRoute.withName(WelcomePage.route));
                         },
                       ),
-                      TextField(
-                        keyboardType: TextInputType.emailAddress,
-                        onChanged: (value) {
-                          newGameName = value;
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'New Game Name',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
-                        ),
+                      CreateGameComp(
+                        updateGameID: updateGameID,
+                        statusColor: statusColor,
                       ),
-                      RaisedButton(
-                        child: Text("Create"),
-                        onPressed: () async {
-                          if (newGameName != "") {
-                            String id =
-                                await User.createNewGame(gameName: newGameName);
-                            newGameID(id);
-                          } else {
-                            print("Need to Name your game!");
-                          }
-                        },
-                      ),
+                      JoinGameComp(
+                        updateGameID: updateGameID,
+                        statusColor: statusColor,
+                      )
                     ],
                   ),
                 ),
                 body: Container(
+                  /// The part on the actual screen
                   decoration: getBorder(statusColor),
                   child: Center(
                     child: Column(
@@ -223,20 +165,21 @@ class _HomePageState extends State<HomePage> {
                           child: getFace(alive: alive),
                         ),
                         Text(
-                          true ? 'Alive' : 'Eliminated',
+                          alive ? 'Alive' : 'Eliminated',
                           style: Theme.of(context).textTheme.display2,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(
-                              "Current game:  ",
+                              "Current game: ${snapshot.data.data["GameName"]} ",
                             ),
                             DropdownButton(
-                              value: User.getGameName(gameID: selectedGameID),
+
                               icon: Icon(Icons.arrow_drop_down),
                               onChanged: (newValue) {
-                                newGameID(User.getGameID(gameName: newValue));
+                                updateGameID(
+                                    User.getGameID(gameName: newValue));
                               },
                               items: User.getGameNames().map((e) {
                                 return DropdownMenuItem(

@@ -14,23 +14,7 @@ class User {
   static String _userID;
   static Map _userData;
 
-  ///Will be replaced by streams
-  Map selectedGameData;
-  Map _playerData;
-
-//  User() {
-//    constructor_Stuff_I_cant_put_in_the_contructor_cuz_its_async();
-//  }
-
-//  void constructor_Stuff_I_cant_put_in_the_contructor_cuz_its_async() async {
-//    await getLoginData();
-//    await getUserData();
-//    await getGameData(gameID: selectedGameID());
-//    await getPlayerData();
-//  }
-
   static Future<void> initialize() async {
-//    var waitList = <Future<void>>[];
     await getLoginData();
     await getUserData();
     print("User Initialized");
@@ -56,7 +40,7 @@ class User {
           _userData = thing.documents.single.data;
           _userID = thing.documents.single.documentID;
           print("UserID = $_userID");
-        }else{
+        } else {
           print("userData not found!");
         }
       },
@@ -70,14 +54,10 @@ class User {
   }
 
   static List<String> getGameNames() {
-//    var userd = _userData;
-//    Map hopefullyGames = _userData["Games"];
-//    Iterable hopefullykeys = _userData["Games"].keys;
-//    var hopefullyList = hopefullykeys.toList();
     return _userData["Games"].keys.toList();
   }
 
-  static Map getGames(){
+  static Map getGames() {
     return _userData["Games"];
   }
 
@@ -117,7 +97,7 @@ class User {
     List activeGames = _userData["Games"].values.toList();
     if (_userData["Games"].values.toList().contains(ID)) {
       return ID;
-    }else {
+    } else {
       return "";
     }
   }
@@ -130,6 +110,7 @@ class User {
 
   /// Creates a new game doc, then populates a subcollection "Players" with the player document for the creator. Then it also updates the current User document's Games feild to include the new game.
   static Future<String> createNewGame({@required gameName}) async {
+    ///Creates new game
     DocumentReference newGameDocRef = await _fstore.collection("Games").add({
       "GameCreator": _userID,
       "GameName": gameName,
@@ -140,6 +121,8 @@ class User {
         },
       }
     });
+
+    /// Creates Players sub collection and adds the player
     _fstore
         .collection("Games")
         .document(newGameDocRef.documentID)
@@ -150,16 +133,65 @@ class User {
       "Username": _userData["Username"],
     });
 
-    _fstore.collection("Users").document(_userID).setData({
+    /// Adds the game to the Users list of games
+    await _fstore.collection("Users").document(_userID).setData({
       "Games": {"$gameName": newGameDocRef.documentID},
     }, merge: true);
 
-    getUserData();
+    /// updates the local user data.
+    await getUserData();
     return newGameDocRef.documentID;
   }
 
-  static Future<String> joinGame({@required gameName}){
+  static Future<String> joinGame({@required gameID}) async {
+    String newGameName = "";
 
+    DocumentSnapshot GdocRef =
+        await _fstore.collection("Games").document(gameID).get();
+
+    if (!GdocRef.exists) {
+      print("That game ID does not extis");
+      return "";
+    }
+
+    ///Adds the user as a player to the specified game's "players" database
+    await _fstore
+        .collection("Games")
+        .document(gameID)
+        .collection("Players")
+        .document(_userID)
+        .setData({
+      "Targetname": "",
+      "Username": _userData["Username"],
+    }).catchError((e) {
+      print("there was an error");
+      print(e);
+    });
+
+    await _fstore.collection("Games").document(gameID).setData({
+      "PlayerStatus": {
+        "${_userData["Username"]}": {
+          "Alive": true,
+          "kills": 0,
+        },
+      }
+    }, merge: true);
+
+    ///Get the game's name then adds the game to the Users list of games.
+    await _fstore.collection("Games").document(gameID).get().then((value) {
+      newGameName = value.data["GameName"];
+      _fstore.collection("Users").document(_userID).setData({
+        "Games": {value.data["GameName"]: gameID},
+      }, merge: true);
+    });
+
+    ///Update Local User Data
+    await getUserData();
+    print("Added to Game");
+
+    ///TODO: Handle error for when user is unable to join a game.
+
+    return newGameName;
   }
 
   static void eliminateTarget() {
