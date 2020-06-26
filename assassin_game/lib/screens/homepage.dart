@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:assassingame/componants/SelectGamePagelet.dart';
 import 'package:assassingame/componants/CreateGameComponent.dart';
+import 'package:assassingame/componants/PopUps.dart';
 import 'package:assassingame/componants/JoinGameComponent.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   var loggedInUser;
   Color statusColor = Colors.blue;
   String selectedGameID = "";
+  bool labelsOn = false;
 //  String selectedGameName;
 
   Future<void> grabGameID() async {
@@ -41,11 +43,10 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         selectedGameID = ID;
       });
-    }else{
+    } else {
       print("Invalid, blank ID passes into updateGameID");
     }
   }
-
 
   @override
   void initState() {
@@ -61,7 +62,6 @@ class _HomePageState extends State<HomePage> {
     if (selectedGameID == "") {
       return SelectGamePagelet(updateGameID: updateGameID);
     } else {
-
       return StreamBuilder<DocumentSnapshot>(
           stream: User.gameDocStreamCreator(gameID: selectedGameID),
           builder: (context, snapshot) {
@@ -75,12 +75,11 @@ class _HomePageState extends State<HomePage> {
                 snapshot.data.data["PlayerStatus"][User.userName()]["Alive"];
             statusColor = alive ? Colors.green : Colors.red;
 
-
             return Scaffold(
               body: SlidingUpPanel(
                 color: Colors.black,
                 minHeight: 25,
-                maxHeight: 300,
+                maxHeight: 200,
                 margin: EdgeInsets.symmetric(horizontal: 8),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10.0),
@@ -109,47 +108,94 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Icon(Icons.drag_handle),
                       ),
-                      alive
-                          ? RaisedButton(
-                              color: Colors.red,
-                              disabledColor: Colors.blueGrey[800],
-                              child: Text("Target Eliminated"),
-                              onPressed: () {
-                                print("target eliminated");
-                                setState(() {
-                                  User.eliminateTarget();
-                                  statusColor = Colors.red;
-                                });
-                              },
-                            )
-                          : Container(),
-                      RaisedButton(
-                        color: statusColor,
-                        disabledColor: Colors.blueGrey[800],
-                        child: Text("View More Details"),
-                        onPressed: () {
-                          print("More Details");
-                          Navigator.pushNamed(context, Details.route);
-                        },
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              IconButton(
+                                  iconSize: 30,
+                                  color: statusColor,
+                                  icon: Icon(Icons.list),
+                                  tooltip: "Games",
+                                  onPressed: () {
+                                    print("More Details");
+                                    Navigator.pushNamed(context, Details.route);
+                                  }),
+                              labelsOn?Text("Games", style: TextStyle(color: Colors.grey),):Container()
+                            ],
+                          ),
+                          alive
+                              ? Column(
+                                children: <Widget>[
+                                  IconButton(
+                                      iconSize: 40,
+                                      color: Colors.red,
+                                      icon: Icon(Icons.gps_fixed),
+                                      tooltip: "Eliminate Target",
+                                      onPressed: () {
+                                        print("target eliminated");
+                                        setState(() {
+                                          User.eliminateTarget();
+                                          statusColor = Colors.red;
+                                        });
+                                      }),
+                                  labelsOn?Text("Eliminate Target", style: TextStyle(color: Colors.grey),):Container()
+                                ],
+                              )
+                              : Container(),
+                          Column(
+                            children: <Widget>[
+                              IconButton(
+                                  iconSize: 30,
+                                  color: statusColor,
+                                  icon: Icon(Icons.exit_to_app),
+                                  tooltip: "Log out",
+                                  onPressed: () {
+                                    _auth.signOut();
+                                    Navigator.popUntil(context,
+                                        ModalRoute.withName(WelcomePage.route));
+                                  }),
+                              labelsOn?Text("Log out", style: TextStyle(color: Colors.grey),):Container()
+                            ],
+                          ),
+                        ],
                       ),
-                      RaisedButton(
-                        color: statusColor,
-                        disabledColor: Colors.blueGrey[800],
-                        child: Text("Log out"),
-                        onPressed: () {
-                          _auth.signOut();
-                          Navigator.popUntil(
-                              context, ModalRoute.withName(WelcomePage.route));
-                        },
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              IconButton(
+                                  iconSize: 30,
+                                  color: statusColor,
+                                  icon: Icon(Icons.add),
+                                  tooltip: "Create Game",
+                                  onPressed: () {
+                                    PopUps.CreateGame(context: context, updateGameID: updateGameID, statusColor: statusColor);
+                                  }),
+                              labelsOn?Text("Create Game", style: TextStyle(color: Colors.grey),): Container(),
+                            ],
+                          ),
+
+                          Column(
+                            children: <Widget>[
+                              IconButton(
+                                  iconSize: 30,
+                                  color: statusColor,
+                                  icon: Icon(Icons.eject),
+                                  tooltip: "Join Game",
+                                  onPressed: () {
+                                    PopUps.JoinGame(context: context, updateGameID: updateGameID, statusColor: statusColor);
+                                  }),
+                              labelsOn?Text("Join Game", style: TextStyle(color: Colors.grey),): Container(),
+                            ],
+                          ),
+
+                        ],
                       ),
-                      CreateGameComp(
-                        updateGameID: updateGameID,
-                        statusColor: statusColor,
-                      ),
-                      JoinGameComp(
-                        updateGameID: updateGameID,
-                        statusColor: statusColor,
-                      )
+
                     ],
                   ),
                 ),
@@ -175,7 +221,6 @@ class _HomePageState extends State<HomePage> {
                               "Current game: ${snapshot.data.data["GameName"]} ",
                             ),
                             DropdownButton(
-
                               icon: Icon(Icons.arrow_drop_down),
                               onChanged: (newValue) {
                                 updateGameID(
