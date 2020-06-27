@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   var loggedInUser;
   Color statusColor = Colors.blue;
   String selectedGameID = "";
-  bool labelsOn = false;
+  bool labelsOn = true;
 //  String selectedGameName;
 
   Future<void> grabGameID() async {
@@ -78,8 +78,8 @@ class _HomePageState extends State<HomePage> {
             return Scaffold(
               body: SlidingUpPanel(
                 color: Colors.black,
-                minHeight: 25,
-                maxHeight: 200,
+                minHeight: 30,
+                maxHeight: 180,
                 margin: EdgeInsets.symmetric(horizontal: 8),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10.0),
@@ -103,6 +103,7 @@ class _HomePageState extends State<HomePage> {
                 panel: Center(
                   /// This is the part when it slides up
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -122,28 +123,37 @@ class _HomePageState extends State<HomePage> {
                                     print("More Details");
                                     Navigator.pushNamed(context, Details.route);
                                   }),
-                              labelsOn?Text("Games", style: TextStyle(color: Colors.grey),):Container()
+                              labelsOn
+                                  ? Text(
+                                      "Games",
+                                      style: TextStyle(color: Colors.grey[700]),
+                                    )
+                                  : Container()
                             ],
                           ),
-                          alive
-                              ? Column(
-                                children: <Widget>[
-                                  IconButton(
-                                      iconSize: 40,
-                                      color: Colors.red,
-                                      icon: Icon(Icons.gps_fixed),
-                                      tooltip: "Eliminate Target",
-                                      onPressed: () {
-                                        print("target eliminated");
-                                        setState(() {
-                                          User.eliminateTarget();
-                                          statusColor = Colors.red;
-                                        });
-                                      }),
-                                  labelsOn?Text("Eliminate Target", style: TextStyle(color: Colors.grey),):Container()
-                                ],
-                              )
-                              : Container(),
+                          Column(
+                            children: <Widget>[
+                              IconButton(
+                                  iconSize: 40,
+                                  color: Colors.red,
+                                  icon: Icon(Icons.gps_fixed),
+                                  tooltip: "Eliminate Target",
+                                  onPressed: alive
+                                      ? () {
+                                          print("target eliminated");
+                                          setState(() {
+                                            User.eliminateTarget();
+                                          });
+                                        }
+                                      : null),
+                              labelsOn
+                                  ? Text(
+                                      "Eliminate Target",
+                                      style: TextStyle(color: Colors.grey[700]),
+                                    )
+                                  : Container()
+                            ],
+                          ),
                           Column(
                             children: <Widget>[
                               IconButton(
@@ -156,12 +166,16 @@ class _HomePageState extends State<HomePage> {
                                     Navigator.popUntil(context,
                                         ModalRoute.withName(WelcomePage.route));
                                   }),
-                              labelsOn?Text("Log out", style: TextStyle(color: Colors.grey),):Container()
+                              labelsOn
+                                  ? Text(
+                                      "Log out",
+                                      style: TextStyle(color: Colors.grey[700]),
+                                    )
+                                  : Container()
                             ],
                           ),
                         ],
                       ),
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
@@ -173,12 +187,19 @@ class _HomePageState extends State<HomePage> {
                                   icon: Icon(Icons.add),
                                   tooltip: "Create Game",
                                   onPressed: () {
-                                    PopUps.CreateGame(context: context, updateGameID: updateGameID, statusColor: statusColor);
+                                    PopUps.CreateGame(
+                                        context: context,
+                                        updateGameID: updateGameID,
+                                        statusColor: statusColor);
                                   }),
-                              labelsOn?Text("Create Game", style: TextStyle(color: Colors.grey),): Container(),
+                              labelsOn
+                                  ? Text(
+                                      "Create Game",
+                                      style: TextStyle(color: Colors.grey[700]),
+                                    )
+                                  : Container(),
                             ],
                           ),
-
                           Column(
                             children: <Widget>[
                               IconButton(
@@ -187,15 +208,21 @@ class _HomePageState extends State<HomePage> {
                                   icon: Icon(Icons.eject),
                                   tooltip: "Join Game",
                                   onPressed: () {
-                                    PopUps.JoinGame(context: context, updateGameID: updateGameID, statusColor: statusColor);
+                                    PopUps.JoinGame(
+                                        context: context,
+                                        updateGameID: updateGameID,
+                                        statusColor: statusColor);
                                   }),
-                              labelsOn?Text("Join Game", style: TextStyle(color: Colors.grey),): Container(),
+                              labelsOn
+                                  ? Text(
+                                      "Join Game",
+                                      style: TextStyle(color: Colors.grey[700]),
+                                    )
+                                  : Container(),
                             ],
                           ),
-
                         ],
                       ),
-
                     ],
                   ),
                 ),

@@ -48,6 +48,9 @@ class _addGamePopUpState extends State<addGamePopUp> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20))
+      ),
       title: Text(widget.create ? "Create Game" : "Join Game"),
       content: TextField(
         onChanged: (value) {
@@ -62,6 +65,9 @@ class _addGamePopUpState extends State<addGamePopUp> {
       actions: <Widget>[
         RaisedButton(
           color: widget.statusColor,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20))
+          ),
           child: Text(widget.create ? "Create" : "Join"),
           onPressed: widget.create
               ? () async {
