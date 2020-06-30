@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:assassingame/user.dart';
 import 'CreateGameComponent.dart';
+import 'JoinGameComponent.dart';
 
 class SelectGamePagelet extends StatelessWidget {
   final updateGameID;
@@ -37,8 +39,11 @@ class SelectGamePagelet extends StatelessWidget {
                   children: gamesWidgetList,
                 ),
               )
-                  : Text("You are not part of any games yet"),
+                  : Text("You are not part of any games yet. Create a new game or join a game."),
+              SizedBox(height: 20,),
               CreateGameComp(updateGameID: updateGameID, statusColor: statusColor,),
+              SizedBox(height: 20,),
+              JoinGameComp(updateGameID: updateGameID, statusColor: statusColor,),
             ],
           ),
         ),
