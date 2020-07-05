@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   void grabGameID() async {
     String ID = await User.getSelectedGameID();
-    if(ID != "") {
+    if (ID != "") {
       setState(() {
         selectedGameID = ID;
       });
@@ -39,14 +39,13 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-
   List<Widget> getGameList() {
     List<Widget> widgetList;
-    widgetList = User.getGameNames().map((e){
+    widgetList = User.getGameNames().map((e) {
       return ListTile(
         leading: Icon(Icons.games),
         title: Text(e),
-        onTap: (){
+        onTap: () {
           newGameID(User.getGameID(gameName: e));
         },
       );
@@ -76,10 +75,10 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               gamesWidgetList.isNotEmpty
                   ? Flexible(
-                    child: ListView(
+                      child: ListView(
                         children: gamesWidgetList,
                       ),
-                  )
+                    )
                   : Text("You are not part of any games yet"),
               TextField(
                 onChanged: (value) {
@@ -121,136 +120,80 @@ class _HomePageState extends State<HomePage> {
             statusColor = alive ? Colors.green : Colors.red;
 
             return Scaffold(
-              body: SlidingUpPanel(
-                color: Colors.black,
-                minHeight: 50,
-                maxHeight: 400,
-                margin: EdgeInsets.symmetric(horizontal: 8),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
-                collapsed: Container(
-                  /// This is the part when its down
-                  decoration: BoxDecoration(
-                    color: statusColor,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                    ),
-                  ),
-                  child: Center(
-                      child: Icon(
-                    Icons.arrow_drop_up,
-                    size: 50,
-                  )),
-                ),
-                panel: Center(
-                  /// This is the part when it slides up
+              resizeToAvoidBottomPadding: false,
+              extendBodyBehindAppBar: true,
+              extendBody: true,
+              appBar: AppBar(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+              ),
+              body: Container(
+                decoration: getBorder(statusColor),
+                child: Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.drag_handle),
+                      Hero(
+                        tag: 'face',
+                        child: getFace(alive: alive),
                       ),
-                      true
-                          ? RaisedButton(
-                              color: Colors.red,
-                              disabledColor: Colors.blueGrey[800],
-                              child: Text("Target Eliminated"),
-                              onPressed: () {
-                                print("target eliminated");
-                                setState(() {
-                                  User.eliminateTarget();
-                                  statusColor = Colors.red;
-                                });
-                              },
-                            )
-                          : Container(),
-                      RaisedButton(
-                        color: statusColor,
-                        disabledColor: Colors.blueGrey[800],
-                        child: Text("View More Details"),
-                        onPressed: () {
-                          print("More Details");
-                          Navigator.pushNamed(context, Details.route);
-                        },
+                      Text(
+                        true ? 'Alive' : 'Eliminated',
+                        style: Theme.of(context).textTheme.display2,
                       ),
-                      RaisedButton(
-                        color: statusColor,
-                        disabledColor: Colors.blueGrey[800],
-                        child: Text("Log out"),
-                        onPressed: () {
-                          _auth.signOut();
-                          Navigator.popUntil(
-                              context, ModalRoute.withName(WelcomePage.route));
-                        },
-                      ),
-                      TextField(
-                        keyboardType: TextInputType.emailAddress,
-                        onChanged: (value) {
-                          newGameName = value;
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'New Game Name',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
-                        ),
-                      ),
-                      RaisedButton(
-                        child: Text("Create"),
-                        onPressed: () async {
-                          if (newGameName != "") {
-                            String id =
-                                await User.createNewGame(gameName: newGameName);
-                            newGameID(id);
-                          } else {
-                            print("Need to Name your game!");
-                          }
-                        },
-                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          MaterialButton(child: Text("Change Game"), onPressed: null,),
+                          DropdownButton(
+                            value: User.getGameName(gameID: selectedGameID),
+                            icon: Icon(Icons.arrow_drop_down),
+                            onChanged: (newValue) {
+                              newGameID(User.getGameID(gameName: newValue));
+                            },
+                            items: User.getGameNames().map((e) {
+                              return DropdownMenuItem(
+                                value: e,
+                                child: Text(e),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
-                body: Container(
-                  decoration: getBorder(statusColor),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Hero(
-                          tag: 'face',
-                          child: getFace(alive: alive),
+              ),
+              bottomNavigationBar: BottomAppBar(
+                clipBehavior: Clip.antiAlias,
+                shape: CircularNotchedRectangle(),
+                notchMargin: 6.0,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    IconButton(
+                        icon: Icon(
+                          Icons.person,
+                          color: Colors.white,
                         ),
-                        Text(
-                          true ? 'Alive' : 'Eliminated',
-                          style: Theme.of(context).textTheme.display2,
+                        onPressed: null),
+                    IconButton(
+                        icon: Icon(
+                          Icons.add,
+                          color: Colors.white,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Current game:  ",
-                            ),
-                            DropdownButton(
-                              value: User.getGameName(gameID: selectedGameID),
-                              icon: Icon(Icons.arrow_drop_down),
-                              onChanged: (newValue) {
-                                newGameID(User.getGameID(gameName: newValue));
-                              },
-                              items: User.getGameNames().map((e) {
-                                return DropdownMenuItem(
-                                  value: e,
-                                  child: Text(e),
-                                );
-                              }).toList(),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
+                        onPressed: null)
+                  ],
                 ),
+              ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
+              floatingActionButton: FloatingActionButton(
+                elevation: 4,
+                backgroundColor: Colors.redAccent,
+                child: Icon(Icons.gps_fixed),
+                onPressed: null,
               ),
             );
           });
