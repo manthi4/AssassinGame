@@ -39,7 +39,7 @@ exports.setTargets = functions.https.onRequest(async (req, res) => {
         // console.log(PlayerDocs)
 
         /// This randomizes the order of the Player documents inthe PlayerDocs Array
-       for (let q = PlayerDocs.length - 1; q > 0; q--) {
+        for (let q = PlayerDocs.length - 1; q > 0; q--) {
             const j = Math.floor(Math.random() * q)
             const temp = PlayerDocs[q]
             PlayerDocs[q] = PlayerDocs[j]
@@ -72,6 +72,68 @@ exports.setTargets = functions.https.onRequest(async (req, res) => {
         return
     }
 })
+
+exports.Eliminate = functions.https.onCall((data, context) => {
+    let part
+
+
+    try {
+        const currentGameID = data.gameID
+        const callerID = context.auth?.uid!
+
+        if (!context.auth) {
+            return { status: 'error', code: 401, message: 'not signed in' }
+        }
+
+        part = 1
+
+        return admin.firestore().collection("Games").doc(currentGameID).collection("Players").doc(callerID).get().then(async(doc) => {
+            if (!doc.exists) {
+                return { status: 'error', code: 401, message: "User's Player not found" }
+            }
+
+            part = 2
+
+            const targetName = doc.data()!["Targetname"]
+
+            return admin.firestore().collection("Games").doc(currentGameID).collection("Players").where("Username", "==", targetName).get().then(async(Q) => {
+               
+                if (Q === undefined) {
+                    return { status: 'error', code: 401, message: "TargetQ undefinded" }
+                }
+               
+                if (!Q.docs[0].exists) {
+                    return { status: 'error', code: 401, message: "Target Player not found", info: Q.toString() }
+                }
+
+                const targetstarget = Q.docs[0].data()["Targetname"]
+                const targetID = Q.docs[0].id
+
+                return admin.firestore().collection("Games").doc(currentGameID).collection("Players").doc(callerID).update({ 'Targetname': targetstarget },).then(
+                    async () => {
+                        await admin.firestore().collection("Games").doc(currentGameID).collection("Players").doc(targetID).delete()
+                        return { status: 'good', code: 401, message: 'executed', uzerid: callerID, gameid: currentGameID, target: targetName, newtarget: targetstarget }
+                    }
+                )
+
+                // return { status: 'bad', code: 401, message: 'fell out out', uzerid: callerID, gameid: currentGameID }
+
+            }).catch(e => { return { status: 'error', code: 401, message: "Target Player idk", info: e.toString() } })
+
+            // return { status: 'bad', code: 401, message: 'fell out outer', uzerid: callerID, gameid: currentGameID }
+        })
+
+        // return Promise.resolve(done)
+        // { status: 'bad', code: 401, message: 'fell outout', uzerid: callerID, gameid: currentGameID }
+
+    } catch (err) {
+
+        console.log(err.toString())
+        return { status: 'error', code: 401, message: 'idkkkkkkk ------------', error: err.toString(), errorpart: part }
+    }
+});
+
+
 // exports.helloWorld = functions.https.onRequest((request, response) => {
 //     response.send("Hello from Firebase!");
-//    });nn
+//    });

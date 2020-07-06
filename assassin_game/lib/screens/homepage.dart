@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                                       ? () {
                                           print("target eliminated");
                                           setState(() {
-                                            User.eliminateTarget();
+                                            User.eliminateTarget(gameID: selectedGameID);
                                           });
                                         }
                                       : null),
@@ -216,6 +216,24 @@ class _HomePageState extends State<HomePage> {
                               labelsOn
                                   ? Text(
                                       "Join Game",
+                                      style: TextStyle(color: Colors.grey[700]),
+                                    )
+                                  : Container(),
+                            ],
+                          ),
+                          Column(
+                            children: <Widget>[
+                              IconButton(
+                                  iconSize: 30,
+                                  color: statusColor,
+                                  icon: Icon(Icons.terrain),
+                                  tooltip: "testButton",
+                                  onPressed: () {
+
+                                  }),
+                              labelsOn
+                                  ? Text(
+                                      "TestButton",
                                       style: TextStyle(color: Colors.grey[700]),
                                     )
                                   : Container(),

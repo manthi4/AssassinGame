@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cross_local_storage/cross_local_storage.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 /// There is only one User in the app. So rather than instantiating a User I think it makes more sense to make everything in the class static.
 
@@ -10,9 +11,15 @@ class User {
   String name = "Cadet";
   static FirebaseAuth _auth = FirebaseAuth.instance;
   static Firestore _fstore = Firestore.instance;
+  static CloudFunctions _clFunctons = CloudFunctions.instance;
   static FirebaseUser currentUser;
   static String _userID;
   static Map _userData;
+  static final HttpsCallable local_Kill =_clFunctons
+      .useFunctionsEmulator(origin: '10.0.2.2:5001') //http://localhost:5001 // http://10.0.2.2:5001
+      .getHttpsCallable(functionName: 'Eliminate');
+  static final HttpsCallable Kill =
+      CloudFunctions.instance.getHttpsCallable(functionName: 'Eliminate');
 
   static Future<void> initialize() async {
     await getLoginData();
@@ -31,7 +38,7 @@ class User {
     print("userEmail: $userEmail");
     await _fstore
         .collection('Users')
-        .where("Email", isEqualTo: "$userEmail")
+        .where("Email", isEqualTo: "$userEmail") ///TODO: we dont need it to search by email anymore since we already have the ID
         .getDocuments()
         .then(
       (thing) {
@@ -194,7 +201,12 @@ class User {
     return newGameName;
   }
 
-  static void eliminateTarget() {
+  static void eliminateTarget({@required gameID}) async {
     //TODO: set target to "claimed elimination" in database
+    print("Trying to test");
+    var data = {"gameID" : gameID};
+    HttpsCallableResult result = await Kill.call(data);
+    print(result.toString());
+    print(result.data.toString());
   }
 }
