@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../user.dart';
 import '../constants.dart';
 import 'detailsPage.dart';
@@ -22,6 +26,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var _auth = FirebaseAuth.instance;
+  final ImagePicker _picker = ImagePicker();
+  StorageReference storageRef = FirebaseStorage.instance.ref();
   var loggedInUser;
   Color statusColor = Colors.blue;
   String selectedGameID = "";
@@ -75,6 +81,7 @@ class _HomePageState extends State<HomePage> {
                 snapshot.data.data["PlayerStatus"][User.userName()]["Alive"];
             statusColor = alive ? Colors.green : Colors.red;
 
+            PickedFile file;
             return Scaffold(
               body: SlidingUpPanel(
                 color: Colors.black,
@@ -226,14 +233,25 @@ class _HomePageState extends State<HomePage> {
                               IconButton(
                                   iconSize: 30,
                                   color: statusColor,
-                                  icon: Icon(Icons.terrain),
-                                  tooltip: "testButton",
-                                  onPressed: () {
 
+                                  icon: Icon(Icons.cloud_upload),
+                                  tooltip: "Upload File",
+                                  splashColor: Colors.white,
+                                  onPressed: () async {
+                                    file = await _picker.getVideo(
+                                        source: ImageSource.gallery);
+                                    storageRef;
+                                    StorageUploadTask uploadTask =
+                                        await storageRef
+                                            .child("hello_world.mp4")
+                                            .putFile(
+                                                File(file.path),
+                                                StorageMetadata(
+                                                    contentType: "type/mp4"));
                                   }),
                               labelsOn
                                   ? Text(
-                                      "TestButton",
+                                      "Upload File",
                                       style: TextStyle(color: Colors.grey[700]),
                                     )
                                   : Container(),
