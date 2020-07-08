@@ -7,18 +7,21 @@ import 'JoinGameComponent.dart';
 class SelectGamePagelet extends StatelessWidget {
   final updateGameID;
   final statusColor;
-  SelectGamePagelet({@required this.updateGameID, this.statusColor = Colors.purple});
+  SelectGamePagelet(
+      {@required this.updateGameID, this.statusColor = Colors.purple});
 
   List<Widget> getGameList() {
-    return User.getGameNames().map((e){
-      return ListTile(
+    List<Widget> Glist = [];
+    User.getGames().forEach((key, value) {
+      Glist.add(ListTile(
         leading: Icon(Icons.games),
-        title: Text(e),
-        onTap: (){
-          updateGameID(User.getGameID(gameName: e));
+        title: Text(value),
+        onTap: () {
+          updateGameID(key);
         },
-      );
-    }).toList();
+      ));
+    });
+    return Glist;
   }
 
   @override
@@ -31,19 +34,35 @@ class SelectGamePagelet extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("Select a Game:", style: TextStyle(fontSize: 20),),
-              SizedBox(height: 20,),
+              Text(
+                "Select a Game:",
+                style: TextStyle(fontSize: 20),
+              ),
+              SizedBox(
+                height: 20,
+              ),
               gamesWidgetList.isNotEmpty
                   ? Flexible(
-                child: ListView(
-                  children: gamesWidgetList,
-                ),
-              )
-                  : Text("You are not part of any games yet. Create a new game or join a game."),
-              SizedBox(height: 20,),
-              CreateGameComp(updateGameID: updateGameID, statusColor: statusColor,),
-              SizedBox(height: 20,),
-              JoinGameComp(updateGameID: updateGameID, statusColor: statusColor,),
+                      child: ListView(
+                        children: gamesWidgetList,
+                      ),
+                    )
+                  : Text(
+                      "You are not part of any games yet. Create a new game or join a game."),
+              SizedBox(
+                height: 20,
+              ),
+              CreateGameComp(
+                updateGameID: updateGameID,
+                statusColor: statusColor,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              JoinGameComp(
+                updateGameID: updateGameID,
+                statusColor: statusColor,
+              ),
             ],
           ),
         ),
@@ -51,6 +70,3 @@ class SelectGamePagelet extends StatelessWidget {
     );
   }
 }
-
-
-

@@ -61,26 +61,26 @@ class User {
   }
 
   static List<String> getGameNames() {
-    return _userData["Games"].keys.toList();
+    return List<String>.from(_userData["Games"].values);
   }
 
-  static Map getGames() {
-    return _userData["Games"];
+  static Map<String, String> getGames() {
+    return Map<String, String>.from(_userData["Games"]);
   }
 
   static String getGameID({@required gameName}) {
-    return _userData["Games"]["$gameName"];
-  }
-
-  static String getGameName({@required gameID}) {
-    Map<String, dynamic> games = _userData["Games"];
+    Map<String, String> games = _userData["Games"];
     String result = "";
     games.forEach((key, value) {
-      if (value == gameID) {
+      if (value == gameName) {
         result = key;
       }
     });
     return result;
+  }
+
+  static String getGameName({@required gameID}) {
+    return _userData["Games"][gameID];
   }
 
   ///These are the streams. There are two streams set up for each game that a user is in. One stream monitors changes in the game document and the other monitors changes in the player document.
@@ -101,8 +101,8 @@ class User {
   static Future<String> getSelectedGameID() async {
     LocalStorageInterface onDevice = await LocalStorage.getInstance();
     String ID = await onDevice.getString("LastActiveG") ?? "";
-    List activeGames = _userData["Games"].values.toList();
-    if (_userData["Games"].values.toList().contains(ID)) {
+    List activeGames = _userData["Games"].keys.toList();
+    if (_userData["Games"].keys.toList().contains(ID)) {
       return ID;
     } else {
       return "";
@@ -142,7 +142,7 @@ class User {
 
     /// Adds the game to the Users list of games
     await _fstore.collection("Users").document(_userID).setData({
-      "Games": {"$gameName": newGameDocRef.documentID},
+      "Games": {newGameDocRef.documentID: "$gameName"},
     }, merge: true);
 
     /// updates the local user data.
@@ -152,7 +152,6 @@ class User {
 
   static Future<String> joinGame({@required gameID}) async {
     String newGameName = "";
-
     DocumentSnapshot GdocRef =
         await _fstore.collection("Games").document(gameID).get();
 
@@ -160,6 +159,9 @@ class User {
       print("That game ID does not extis");
       return "";
     }
+
+    ///TODO: Need yo check if the user is already in the game. If so then don't add them again. Instead show a notification about it.
+//    if(_userData["Games"])
 
     ///Adds the user as a player to the specified game's "players" database
     await _fstore
@@ -175,6 +177,7 @@ class User {
       print(e);
     });
 
+    ///Adds the user to the list of players in the gamedoc
     await _fstore.collection("Games").document(gameID).setData({
       "PlayerStatus": {
         "${_userData["Username"]}": {
@@ -188,7 +191,7 @@ class User {
     await _fstore.collection("Games").document(gameID).get().then((value) {
       newGameName = value.data["GameName"];
       _fstore.collection("Users").document(_userID).setData({
-        "Games": {value.data["GameName"]: gameID},
+        "Games": {gameID : value.data["GameName"]},
       }, merge: true);
     });
 

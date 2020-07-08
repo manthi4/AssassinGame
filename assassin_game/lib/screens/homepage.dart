@@ -48,6 +48,8 @@ class _HomePageState extends State<HomePage> {
       await User.setSelectedGameID(gameID: ID);
       setState(() {
         selectedGameID = ID;
+
+        ///TODO: possible code compression
       });
     } else {
       print("Invalid, blank ID passes into updateGameID");
@@ -149,7 +151,8 @@ class _HomePageState extends State<HomePage> {
                                       ? () {
                                           print("target eliminated");
                                           setState(() {
-                                            User.eliminateTarget(gameID: selectedGameID);
+                                            User.eliminateTarget(
+                                                gameID: selectedGameID);
                                           });
                                         }
                                       : null),
@@ -233,7 +236,6 @@ class _HomePageState extends State<HomePage> {
                               IconButton(
                                   iconSize: 30,
                                   color: statusColor,
-
                                   icon: Icon(Icons.cloud_upload),
                                   tooltip: "Upload File",
                                   splashColor: Colors.white,
