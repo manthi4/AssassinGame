@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:assassingame/screens/UserPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,9 +13,10 @@ import 'welcomPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:assassingame/componants/SelectGamePagelet.dart';
-import 'package:assassingame/componants/CreateGameComponent.dart';
 import 'package:assassingame/componants/PopUps.dart';
-import 'package:assassingame/componants/JoinGameComponent.dart';
+import 'primary.dart';
+import 'package:assassingame/screens/detailsPage.dart';
+import 'GamesPage.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -28,11 +30,8 @@ class _HomePageState extends State<HomePage> {
   var _auth = FirebaseAuth.instance;
   final ImagePicker _picker = ImagePicker();
   StorageReference storageRef = FirebaseStorage.instance.ref();
-  var loggedInUser;
-  Color statusColor = Colors.blue;
   String selectedGameID = "";
   bool labelsOn = true;
-//  String selectedGameName;
 
   Future<void> grabGameID() async {
     String ID = await User.getSelectedGameID();
@@ -43,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> updateGameID(ID) async {
+  Future<void> updateGameID(String ID) async {
     if (ID != "") {
       await User.setSelectedGameID(gameID: ID);
       setState(() {
@@ -81,230 +80,193 @@ class _HomePageState extends State<HomePage> {
             var dta = snapshot.data;
             bool alive =
                 snapshot.data.data["PlayerStatus"][User.userName()]["Alive"];
-            statusColor = alive ? Colors.green : Colors.red;
+            Color statusColor = statuscolor(alive);
 
             PickedFile file;
             return Scaffold(
               body: SlidingUpPanel(
-                color: Colors.black,
-                minHeight: 30,
-                maxHeight: 180,
-                margin: EdgeInsets.symmetric(horizontal: 8),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10.0),
-                  topRight: Radius.circular(10.0),
-                ),
-                collapsed: Container(
-                  /// This is the part when its down
-                  decoration: BoxDecoration(
-                    color: statusColor,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10.0),
-                      topRight: Radius.circular(10.0),
+
+                  ///TODO: see if DraggableScrollableSheet is better here
+                  color: Colors.black,
+                  minHeight: 30,
+                  maxHeight: 180,
+                  margin: EdgeInsets.symmetric(horizontal: 8),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10.0),
+                    topRight: Radius.circular(10.0),
+                  ),
+                  collapsed: Container(
+                    /// This is the part when its down
+                    decoration: BoxDecoration(
+                      color: statusColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10.0),
+                        topRight: Radius.circular(10.0),
+                      ),
                     ),
+                    child: Center(
+                        child: Icon(
+                      Icons.arrow_drop_up,
+                      size: 25,
+                    )),
                   ),
-                  child: Center(
-                      child: Icon(
-                    Icons.arrow_drop_up,
-                    size: 25,
-                  )),
-                ),
-                panel: Center(
-                  /// This is the part when it slides up
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.drag_handle),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              IconButton(
-                                  iconSize: 30,
-                                  color: statusColor,
-                                  icon: Icon(Icons.list),
-                                  tooltip: "Games",
-                                  onPressed: () {
-                                    print("More Details");
-                                    Navigator.pushNamed(context, Details.route);
-                                  }),
-                              labelsOn
-                                  ? Text(
-                                      "Games",
-                                      style: TextStyle(color: Colors.grey[700]),
-                                    )
-                                  : Container()
-                            ],
-                          ),
-                          Column(
-                            children: <Widget>[
-                              IconButton(
-                                  iconSize: 40,
-                                  color: Colors.red,
-                                  icon: Icon(Icons.gps_fixed),
-                                  tooltip: "Eliminate Target",
-                                  onPressed: alive
-                                      ? () {
-                                          print("target eliminated");
-                                          setState(() {
-                                            User.eliminateTarget(
-                                                gameID: selectedGameID);
-                                          });
-                                        }
-                                      : null),
-                              labelsOn
-                                  ? Text(
-                                      "Eliminate Target",
-                                      style: TextStyle(color: Colors.grey[700]),
-                                    )
-                                  : Container()
-                            ],
-                          ),
-                          Column(
-                            children: <Widget>[
-                              IconButton(
-                                  iconSize: 30,
-                                  color: statusColor,
-                                  icon: Icon(Icons.exit_to_app),
-                                  tooltip: "Log out",
-                                  onPressed: () {
-                                    _auth.signOut();
-                                    Navigator.popUntil(context,
-                                        ModalRoute.withName(WelcomePage.route));
-                                  }),
-                              labelsOn
-                                  ? Text(
-                                      "Log out",
-                                      style: TextStyle(color: Colors.grey[700]),
-                                    )
-                                  : Container()
-                            ],
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              IconButton(
-                                  iconSize: 30,
-                                  color: statusColor,
-                                  icon: Icon(Icons.add),
-                                  tooltip: "Create Game",
-                                  onPressed: () {
-                                    PopUps.CreateGame(
-                                        context: context,
-                                        updateGameID: updateGameID,
-                                        statusColor: statusColor);
-                                  }),
-                              labelsOn
-                                  ? Text(
-                                      "Create Game",
-                                      style: TextStyle(color: Colors.grey[700]),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                          Column(
-                            children: <Widget>[
-                              IconButton(
-                                  iconSize: 30,
-                                  color: statusColor,
-                                  icon: Icon(Icons.eject),
-                                  tooltip: "Join Game",
-                                  onPressed: () {
-                                    PopUps.JoinGame(
-                                        context: context,
-                                        updateGameID: updateGameID,
-                                        statusColor: statusColor);
-                                  }),
-                              labelsOn
-                                  ? Text(
-                                      "Join Game",
-                                      style: TextStyle(color: Colors.grey[700]),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                          Column(
-                            children: <Widget>[
-                              IconButton(
-                                  iconSize: 30,
-                                  color: statusColor,
-                                  icon: Icon(Icons.cloud_upload),
-                                  tooltip: "Upload File",
-                                  splashColor: Colors.white,
-                                  onPressed: () async {
-                                    file = await _picker.getVideo(
-                                        source: ImageSource.gallery);
-                                    storageRef;
-                                    StorageUploadTask uploadTask =
-                                        await storageRef
-                                            .child("hello_world.mp4")
-                                            .putFile(
-                                                File(file.path),
-                                                StorageMetadata(
-                                                    contentType: "type/mp4"));
-                                  }),
-                              labelsOn
-                                  ? Text(
-                                      "Upload File",
-                                      style: TextStyle(color: Colors.grey[700]),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                body: Container(
-                  /// The part on the actual screen
-                  decoration: getBorder(statusColor),
-                  child: Center(
+                  panel: Center(
+                    /// This is the part when it slides up
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        Hero(
-                          tag: 'face',
-                          child: getFace(alive: alive),
-                        ),
-                        Text(
-                          alive ? 'Alive' : 'Eliminated',
-                          style: Theme.of(context).textTheme.display2,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(Icons.drag_handle),
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            Text(
-                              "Current game: ${snapshot.data.data["GameName"]} ",
+                            Column(
+                              children: <Widget>[
+                                IconButton(
+                                    iconSize: 30,
+                                    color: statusColor,
+                                    icon: Icon(Icons.cloud_upload),
+                                    tooltip: "Upload File",
+                                    splashColor: Colors.white,
+                                    onPressed: () async {
+                                      file = await _picker.getVideo(
+                                          source: ImageSource.gallery);
+                                      storageRef;
+                                      StorageUploadTask uploadTask =
+                                          await storageRef
+                                              .child("hello_world.mp4")
+                                              .putFile(
+                                                  File(file.path),
+                                                  StorageMetadata(
+                                                      contentType: "type/mp4"));
+                                    }),
+                                labelsOn
+                                    ? Text(
+                                        "Upload File",
+                                        style:
+                                            TextStyle(color: Colors.grey[700]),
+                                      )
+                                    : Container(),
+                              ],
                             ),
-                            DropdownButton(
-                              icon: Icon(Icons.arrow_drop_down),
-                              onChanged: (newValue) {
-                                updateGameID(
-                                    User.getGameID(gameName: newValue));
-                              },
-                              items: User.getGameNames().map((e) {
-                                return DropdownMenuItem(
-                                  value: e,
-                                  child: Text(e),
-                                );
-                              }).toList(),
+                            Column(
+                              children: <Widget>[
+                                IconButton(
+                                    iconSize: 40,
+                                    color: Colors.red,
+                                    icon: Icon(Icons.gps_fixed),
+                                    tooltip: "Eliminate Target",
+                                    onPressed: alive
+                                        ? () {
+                                            print("target eliminated");
+                                            setState(() {
+                                              User.eliminateTarget(
+                                                  gameID: selectedGameID);
+                                            });
+                                          }
+                                        : null),
+                                labelsOn
+                                    ? Text(
+                                        "Eliminate Target",
+                                        style:
+                                            TextStyle(color: Colors.grey[700]),
+                                      )
+                                    : Container()
+                              ],
+                            ),
+                            Column(
+                              children: <Widget>[
+                                IconButton(
+                                    iconSize: 30,
+                                    color: statusColor,
+                                    icon: Icon(Icons.person),
+                                    tooltip: "Profile",
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                          context, UserPage.route);
+                                    }),
+                                labelsOn
+                                    ? Text(
+                                        "Profile",
+                                        style:
+                                            TextStyle(color: Colors.grey[700]),
+                                      )
+                                    : Container()
+                              ],
                             ),
                           ],
-                        )
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                IconButton(
+                                    iconSize: 30,
+                                    color: statusColor,
+                                    icon: Icon(Icons.add),
+                                    tooltip: "Create Game",
+                                    onPressed: () {
+                                      PopUps.CreateGame(
+                                          context: context,
+                                          updateGameID: updateGameID,
+                                          statusColor: statusColor);
+                                    }),
+                                labelsOn
+                                    ? Text(
+                                        "Create Game",
+                                        style:
+                                            TextStyle(color: Colors.grey[700]),
+                                      )
+                                    : Container(),
+                              ],
+                            ),
+                            Column(
+                              children: <Widget>[
+                                IconButton(
+                                    iconSize: 30,
+                                    color: statusColor,
+                                    icon: Icon(Icons.eject),
+                                    tooltip: "Join Game",
+                                    onPressed: () {
+                                      PopUps.JoinGame(
+                                          context: context,
+                                          updateGameID: updateGameID,
+                                          statusColor: statusColor);
+                                    }),
+                                labelsOn
+                                    ? Text(
+                                        "Join Game",
+                                        style:
+                                            TextStyle(color: Colors.grey[700]),
+                                      )
+                                    : Container(),
+                              ],
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                ),
-              ),
+
+                  ///This is the actual background screen part
+                  body: Container(
+                    decoration: getBorder(statuscolor(alive)),
+                    child: PageView(
+                        controller: PageController(
+                          initialPage: 1,
+                        ),
+                        children: [
+                          GamesPage(),
+                          clarifyname(
+                              GameName: snapshot.data.data["GameName"],
+                              alive: alive,
+                              updateGameID: updateGameID),
+                          Details(),
+                        ]),
+                  )),
             );
           });
     }

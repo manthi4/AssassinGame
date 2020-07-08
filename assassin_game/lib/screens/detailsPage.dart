@@ -8,32 +8,27 @@ class Details extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: getBorder(true ? Colors.green : Colors.red),
-        child: Center(
-          child: Column(
+    return Center(
+      child: Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Hero(
-                    tag: 'face',
-                    child: getFace(alive: true),
+              Hero(
+                tag: 'face',
+                child: getFace(alive: true),
+              ),
+              Expanded(
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(user.name, style: TextStyle(fontSize: 40),),
                   ),
-                  Expanded(
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(user.name, style: TextStyle(fontSize: 40),),
-                      ),
-                    ),
-                  )
-                ],
+                ),
               )
             ],
-          ),
-        ),
+          )
+        ],
       ),
     );
   }

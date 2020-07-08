@@ -69,7 +69,7 @@ class User {
   }
 
   static String getGameID({@required gameName}) {
-    Map<String, String> games = _userData["Games"];
+    Map<String, String> games =Map<String, String>.from(_userData["Games"]);
     String result = "";
     games.forEach((key, value) {
       if (value == gameName) {

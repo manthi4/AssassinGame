@@ -20,16 +20,20 @@ BoxDecoration getBorder(Color color) {
       ),
       borderRadius: BorderRadius.circular(10));
 }
+Color defaultcolor = Colors.purple;
+Color statuscolor(bool alive){
+  return alive? Colors.green:Colors.red;
+}
 
 Widget getFace({bool alive, size = 60.0}){
   return alive ? Icon(
     Icons.sentiment_very_satisfied,
-    color: Colors.green,
+    color: statuscolor(alive),
     size: size,
   )
       : Icon(
     Icons.sentiment_very_dissatisfied,
-    color: Colors.red,
+    color: statuscolor(alive),
     size: size,
   );
 }
