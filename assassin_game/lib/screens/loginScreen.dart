@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void login() async {
     try {
-      final user = await _auth.signInWithEmailAndPassword(
+      final user = await _auth.signInWithEmailAndPassword(///TODO: Before release, need to verify emails are real
           email: email, password: password);
       if (user != null) {
         await User.initialize();
@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onChanged: (value) {
                     email = value;
                   },
-                  decoration: TextFieldStyle.copyWith(hintText: "Email"),
+                  decoration: TextFieldDecor.copyWith(hintText: "Email"),
                 ),
                 SizedBox(height: 10),
                 TextField(
@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onChanged: (value) {
                     password = value;
                   },
-                  decoration: TextFieldStyle,
+                  decoration: TextFieldDecor,
                 ),
                 SizedBox(height: 20),
                 widget.loggingIn
@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           userName = value;
                         },
                         decoration:
-                            TextFieldStyle.copyWith(hintText: "Username"),
+                            TextFieldDecor.copyWith(hintText: "Username"),
                       ),
                 SizedBox(height: 20),
                 widget.loggingIn
@@ -118,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-const TextFieldStyle = InputDecoration(
+const TextFieldDecor = InputDecoration(
   hintText: 'Password',
   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
 );

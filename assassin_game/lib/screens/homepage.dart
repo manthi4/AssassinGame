@@ -9,7 +9,6 @@ import 'package:image_picker/image_picker.dart';
 import '../user.dart';
 import '../constants.dart';
 import 'detailsPage.dart';
-import 'welcomPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:assassingame/componants/SelectGamePagelet.dart';
@@ -17,6 +16,8 @@ import 'package:assassingame/componants/PopUps.dart';
 import 'primary.dart';
 import 'package:assassingame/screens/detailsPage.dart';
 import 'GamesPage.dart';
+
+
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -29,6 +30,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var _auth = FirebaseAuth.instance;
   final ImagePicker _picker = ImagePicker();
+  PickedFile file;
   StorageReference storageRef = FirebaseStorage.instance.ref();
   String selectedGameID = "";
   bool labelsOn = true;
@@ -77,12 +79,12 @@ class _HomePageState extends State<HomePage> {
 //              child: Text("Waiting for connection"),
 //            );
 //          }
-            var dta = snapshot.data;
+//            var dta = snapshot.data;
             bool alive =
                 snapshot.data.data["PlayerStatus"][User.userName()]["Alive"];
             Color statusColor = statuscolor(alive);
 
-            PickedFile file;
+///            PickedFile file; ///Made this a State variable instead
             return Scaffold(
               body: SlidingUpPanel(
 
@@ -133,10 +135,10 @@ class _HomePageState extends State<HomePage> {
                                     onPressed: () async {
                                       file = await _picker.getVideo(
                                           source: ImageSource.gallery);
-                                      storageRef;
+//                                      storageRef;
                                       StorageUploadTask uploadTask =
                                           await storageRef
-                                              .child("hello_world.mp4")
+                                              .child("hello_worldo.mp4")
                                               .putFile(
                                                   File(file.path),
                                                   StorageMetadata(

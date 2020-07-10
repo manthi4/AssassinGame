@@ -15,7 +15,7 @@ class SelectGamePagelet extends StatelessWidget {
     User.getGames().forEach((key, value) {
       Glist.add(ListTile(
         leading: Icon(Icons.games),
-        title: Text(value),
+        title: Text(value["GameName"]),
         onTap: () {
           updateGameID(key);
         },

@@ -11,6 +11,8 @@ import 'user.dart';
 //        borderRadius: BorderRadius.circular(10));
 //  }
 //}
+ShapeBorder roundyBox = RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(20)));
 
 BoxDecoration getBorder(Color color) {
   return BoxDecoration(

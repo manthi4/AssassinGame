@@ -27,9 +27,10 @@ class clarifyname extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Current game: ${GameName} ",
+                "Current game:  $GameName",
               ),
               DropdownButton(
+                value: GameName,
                 icon: Icon(Icons.arrow_drop_down),
                 onChanged: (newValue) async{
                   String newID = User.getGameID(gameName: newValue);
@@ -43,9 +44,42 @@ class clarifyname extends StatelessWidget {
                 }).toList(),
               ),
             ],
-          )
+          ),
+
+//          Container(
+//            height: 100,
+//            color: Colors.yellow,
+//            child: ListView(
+//                children: <Widget>[
+//
+//                  Material(
+//                    elevation: 5.0,
+//                    color: Colors.brown,
+//                    borderRadius: BorderRadius.circular(30.0),
+//                    child: MaterialButton(
+//
+//                      child: Text("hi", style: TextStyle(color: Colors.white),),
+//                      height: 42.0,
+//                    ),
+//                  ),
+//                  Material(
+//                    elevation: 5.0,
+//                    color: statuscolor(alive),
+//                    borderRadius: BorderRadius.circular(30.0),
+//                    child: MaterialButton(
+//
+//                      child: Text("hi", style: TextStyle(color: Colors.white),),
+//                      height: 42.0,
+//                    ),
+//                  )
+//
+//                ],
+//            ),
+//          ),
+
         ],
       ),
     );
   }
 }
+

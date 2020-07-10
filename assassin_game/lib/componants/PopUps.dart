@@ -28,7 +28,7 @@ class PopUps {
   }
 }
 
-class addGamePopUp extends StatefulWidget {
+class addGamePopUp extends StatefulWidget {///TODO: if the user makes a mistake (ex: blank name) show a hint in red text.
   final updateGameID;
   final Color statusColor;
   final bool create;

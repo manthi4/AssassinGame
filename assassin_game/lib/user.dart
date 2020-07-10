@@ -15,8 +15,10 @@ class User {
   static FirebaseUser currentUser;
   static String _userID;
   static Map _userData;
-  static final HttpsCallable local_Kill =_clFunctons
-      .useFunctionsEmulator(origin: '10.0.2.2:5001') //http://localhost:5001 // http://10.0.2.2:5001
+  static final HttpsCallable local_Kill = _clFunctons
+      .useFunctionsEmulator(
+          origin:
+              '10.0.2.2:5001') //http://localhost:5001 // http://10.0.2.2:5001
       .getHttpsCallable(functionName: 'Eliminate');
   static final HttpsCallable Kill =
       CloudFunctions.instance.getHttpsCallable(functionName: 'Eliminate');
@@ -38,7 +40,9 @@ class User {
     print("userEmail: $userEmail");
     await _fstore
         .collection('Users')
-        .where("Email", isEqualTo: "$userEmail") ///TODO: we dont need it to search by email anymore since we already have the ID
+        .where("Email", isEqualTo: "$userEmail")
+
+        ///TODO: we dont need it to search by email anymore since we already have the ID
         .getDocuments()
         .then(
       (thing) {
@@ -61,18 +65,24 @@ class User {
   }
 
   static List<String> getGameNames() {
-    return List<String>.from(_userData["Games"].values);
+    List<String> names = [];
+    Map<String, dynamic> Games = Map<String, dynamic>.from(_userData["Games"]);
+    Games.forEach((key, value) {
+      names.add(value["GameName"]);
+    });
+
+    return names;
   }
 
-  static Map<String, String> getGames() {
+  static Map<String, dynamic> getGames() {
     return Map<String, String>.from(_userData["Games"]);
   }
 
   static String getGameID({@required gameName}) {
-    Map<String, String> games =Map<String, String>.from(_userData["Games"]);
+    Map<String, dynamic> games = Map<String, dynamic>.from(_userData["Games"]);
     String result = "";
     games.forEach((key, value) {
-      if (value == gameName) {
+      if (value["GameName"] == gameName) {
         result = key;
       }
     });
@@ -80,7 +90,7 @@ class User {
   }
 
   static String getGameName({@required gameID}) {
-    return _userData["Games"][gameID];
+    return _userData["Games"][gameID]["GameName"];
   }
 
   ///These are the streams. There are two streams set up for each game that a user is in. One stream monitors changes in the game document and the other monitors changes in the player document.
@@ -142,7 +152,15 @@ class User {
 
     /// Adds the game to the Users list of games
     await _fstore.collection("Users").document(_userID).setData({
-      "Games": {newGameDocRef.documentID: "$gameName"},
+      "Games": {
+        newGameDocRef.documentID.toString()
+            : {
+          "GameName": "$gameName",
+          "Active": true,
+          "Alive": true,
+          "Owner": true,
+        },
+      },
     }, merge: true);
 
     /// updates the local user data.
@@ -191,7 +209,15 @@ class User {
     await _fstore.collection("Games").document(gameID).get().then((value) {
       newGameName = value.data["GameName"];
       _fstore.collection("Users").document(_userID).setData({
-        "Games": {gameID : value.data["GameName"]},
+        "Games": {
+          gameID.toString()
+              : {
+            "GameName": value.data["GameName"],
+            "Active": true,
+            "Alive": true, ///TODO: need to update the kill cloud function to set this to false in the Target's user doc
+            "Owner": false,
+          },
+        },
       }, merge: true);
     });
 
@@ -204,10 +230,12 @@ class User {
     return newGameName;
   }
 
-  static void eliminateTarget({@required gameID}) async {
+  static void eliminateTarget({@required gameID}) async { ///TODO: set the value of Alive to false in the Target's User Doc
+    ///TODO: Make a cloud function that checks if there is anyone still alive, if not then mark the game as inactive in everyone's user doc
     //TODO: set target to "claimed elimination" in database
+
     print("Trying to test");
-    var data = {"gameID" : gameID};
+    var data = {"gameID": gameID};
     HttpsCallableResult result = await Kill.call(data);
     print(result.toString());
     print(result.data.toString());
