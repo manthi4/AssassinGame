@@ -22,7 +22,7 @@ class Details extends StatelessWidget {
                 child: Card(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(user.name, style: TextStyle(fontSize: 40),),
+                    child: Text(User.userName(), style: TextStyle(fontSize: 40),),
                   ),
                 ),
               )

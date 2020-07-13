@@ -27,7 +27,7 @@ class clarifyname extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Current game:  $GameName",
+                "Current game:  $GameName ",
               ),
               DropdownButton(
                 value: GameName,

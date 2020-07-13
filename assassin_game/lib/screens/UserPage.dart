@@ -27,6 +27,7 @@ class _UserPageState extends State<UserPage> {
             children: <Widget>[
               Column(
                 children: <Widget>[
+
                   IconButton(
                       iconSize: 30,
                       color: statusColor,

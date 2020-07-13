@@ -8,7 +8,6 @@ import 'package:cloud_functions/cloud_functions.dart';
 /// There is only one User in the app. So rather than instantiating a User I think it makes more sense to make everything in the class static.
 
 class User {
-  String name = "Cadet";
   static FirebaseAuth _auth = FirebaseAuth.instance;
   static Firestore _fstore = Firestore.instance;
   static CloudFunctions _clFunctons = CloudFunctions.instance;
@@ -75,7 +74,7 @@ class User {
   }
 
   static Map<String, dynamic> getGames() {
-    return Map<String, String>.from(_userData["Games"]);
+    return Map<String, dynamic>.from(_userData["Games"]);
   }
 
   static String getGameID({@required gameName}) {
