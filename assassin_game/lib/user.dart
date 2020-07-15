@@ -4,23 +4,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cross_local_storage/cross_local_storage.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:http/http.dart';
 
 /// There is only one User in the app. So rather than instantiating a User I think it makes more sense to make everything in the class static.
 
 class User {
   static FirebaseAuth _auth = FirebaseAuth.instance;
   static Firestore _fstore = Firestore.instance;
-  static CloudFunctions _clFunctons = CloudFunctions.instance;
+//  static CloudFunctions _clFunctons = CloudFunctions.instance;
   static FirebaseUser currentUser;
   static String _userID;
   static Map _userData;
-  static final HttpsCallable local_Kill = _clFunctons
-      .useFunctionsEmulator(
-          origin:
-              '10.0.2.2:5001') //http://localhost:5001 // http://10.0.2.2:5001
-      .getHttpsCallable(functionName: 'Eliminate');
   static final HttpsCallable Kill =
       CloudFunctions.instance.getHttpsCallable(functionName: 'Eliminate');
+//  static final
 
   static Future<void> initialize() async {
     await getLoginData();
@@ -58,9 +55,10 @@ class User {
   }
 
   static String userName() {
-    var username = _userData["Username"];
-    var wut = true;
     return _userData["Username"];
+  }
+  static String userID(){
+    return _userID;
   }
 
   static List<String> getGameNames() {
@@ -229,7 +227,7 @@ class User {
     return newGameName;
   }
 
-  static void eliminateTarget({@required gameID}) async { ///TODO: set the value of Alive to false in the Target's User Doc
+  static Future<void> eliminateTarget({@required gameID}) async { ///TODO: set the value of Alive to false in the Target's User Doc
     ///TODO: Make a cloud function that checks if there is anyone still alive, if not then mark the game as inactive in everyone's user doc
     //TODO: set target to "claimed elimination" in database
 
@@ -238,5 +236,11 @@ class User {
     HttpsCallableResult result = await Kill.call(data);
     print(result.toString());
     print(result.data.toString());
+  }
+
+  static Future<void> startGame({@required gameID}) async {
+    var url = "https://us-central1-assassingame-c59a6.cloudfunctions.net/setTargets?gameid=${gameID}";
+    var response = await post(url);
+    print("response was: ${response.body.toString()}");
   }
 }

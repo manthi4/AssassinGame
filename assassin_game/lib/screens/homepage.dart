@@ -3,13 +3,11 @@ import 'dart:io';
 import 'package:assassingame/screens/UserPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../user.dart';
 import '../constants.dart';
 import 'detailsPage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:assassingame/componants/SelectGamePagelet.dart';
 import 'package:assassingame/componants/PopUps.dart';
@@ -18,15 +16,12 @@ import 'package:assassingame/screens/detailsPage.dart';
 import 'GamesPage.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
   static String route = 'home';
-
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  var _auth = FirebaseAuth.instance;
   final ImagePicker _picker = ImagePicker();
   PickedFile file;
   StorageReference storageRef = FirebaseStorage.instance.ref();
@@ -51,7 +46,7 @@ class _HomePageState extends State<HomePage> {
         ///TODO: possible code compression
       });
     } else {
-      print("Invalid, blank ID passes into updateGameID");
+      print("Invalid, blank ID passed into updateGameID");
     }
   }
 
@@ -72,19 +67,20 @@ class _HomePageState extends State<HomePage> {
       return StreamBuilder<DocumentSnapshot>(
           stream: User.gameDocStreamCreator(gameID: selectedGameID),
           builder: (context, snapshot) {
+            ///TODO: to make it more robust, if somehow the app starts with an invalid GameID, then send them to the game picking screen
 //          if (!snapshot.data.exists & ) {
 //            return Center(
 //              child: Text("Waiting for connection"),
 //            );
 //          }
-//            var dta = snapshot.data;
+
             bool alive =
                 snapshot.data.data["PlayerStatus"][User.userName()]["Alive"];
             Color statusColor = statuscolor(alive);
 
             ///            PickedFile file; ///Made this a State variable instead
             return Scaffold(
-
+              backgroundColor: Colors.grey[900],
               body: SlidingUpPanel(
                 ///TODO: see if DraggableScrollableSheet is better here
                 color: Colors.black,
@@ -133,7 +129,6 @@ class _HomePageState extends State<HomePage> {
                                   onPressed: () async {
                                     file = await _picker.getVideo(
                                         source: ImageSource.gallery);
-//                                      storageRef;
                                     StorageUploadTask uploadTask =
                                         await storageRef
                                             .child("hello_worldo.mp4")
@@ -249,18 +244,27 @@ class _HomePageState extends State<HomePage> {
                 ///This is the actual background screen part
                 body: Container(
                   decoration: getBorder(statuscolor(alive)),
-                  child: PageView(
-                      controller: PageController(
-                        initialPage: 1,
-                      ),
-                      children: [
-                        GamesPage(updateGameID: updateGameID, GameName: snapshot.data.data["GameName"],),
-                        clarifyname(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: PageView(
+                        controller: PageController(
+                          initialPage: 1,
+                        ),
+                        children: [
+                          GamesPage(
+                            updateGameID: updateGameID,
                             GameName: snapshot.data.data["GameName"],
+                          ),
+                          clarifyname(
                             alive: alive,
-                            updateGameID: updateGameID),
-                        Details(),
-                      ]),
+                            updateGameID: updateGameID,
+                            gameData: snapshot.data,
+                          ),
+                          Details(
+                            gamedata: snapshot.data.data,
+                          ),
+                        ]),
+                  ),
                 ),
               ),
             );

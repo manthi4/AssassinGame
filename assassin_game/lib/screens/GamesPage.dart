@@ -1,7 +1,7 @@
 import 'package:assassingame/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:assassingame/user.dart';
+import 'package:assassingame/constants.dart';
 
 class GamesPage extends StatelessWidget {
   final updateGameID;
@@ -34,29 +34,7 @@ class GamesPage extends StatelessWidget {
     return Tiles;
   }
 
-  Widget gameBlock({String title, bool active}) {
-    return Card(
-      margin: EdgeInsets.symmetric(
-          horizontal: 8.0), //EdgeInsets.symmetric(horizontal: 8.0)
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              title,
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(0.0),
-              children: getGameTiles(active: active),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,14 +45,18 @@ class GamesPage extends StatelessWidget {
           children: <Widget>[
             Expanded(
               flex: 1,
-              child: gameBlock(title: "Active Games: ", active: true),
+              child: cardListBlock(
+                  title: "Active Games: ",
+                  children: getGameTiles(active: true)),
             ),
             SizedBox(
               height: 20,
             ),
             Expanded(
               flex: 1,
-              child: gameBlock(title: "Inactive Games: ", active: false),
+              child: cardListBlock(
+                  title: "Inactive Games: ",
+                  children: getGameTiles(active: false)),
             ),
             SizedBox(
               height: 20,

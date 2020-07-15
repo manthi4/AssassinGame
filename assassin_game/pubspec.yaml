@@ -18,6 +18,8 @@ dependencies:
   cloud_functions: ^0.5.0
   image_picker: ^0.6.7+2
   firebase_storage: ^3.1.6
+  http: ^0.12.1
+
 
 dev_dependencies:
   flutter_test:
