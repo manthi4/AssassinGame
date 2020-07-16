@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:assassingame/user.dart';
+import 'package:assassingame/constants.dart';
 
 class PopUps {
   static CreateGame(
@@ -44,14 +45,14 @@ class addGamePopUp extends StatefulWidget {///TODO: if the user makes a mistake 
 
 class _addGamePopUpState extends State<addGamePopUp> {
   String Userinput = "";
-
+  String errorText = null;
   @override
+
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20))
-      ),
+      shape: roundyBox,
       title: Text(widget.create ? "Create Game" : "Join Game"),
+
       content: TextField(
         onChanged: (value) {
           Userinput = value;
@@ -60,7 +61,9 @@ class _addGamePopUpState extends State<addGamePopUp> {
           hintText: widget.create ? 'New Game Name' : 'Game ID',
           contentPadding:
               EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+          errorText: errorText,
         ),
+
       ),
       actions: <Widget>[
         RaisedButton(
@@ -74,8 +77,12 @@ class _addGamePopUpState extends State<addGamePopUp> {
                   if (Userinput != "") {
                     String id = await User.createNewGame(gameName: Userinput);
                     widget.updateGameID(id);
+                    Navigator.of(context).pop();
                   } else {
                     print("Cant be left blank");
+                    setState(() {
+                      errorText = "Can not be blank";
+                    });
                   }
                 }
               : () async {
@@ -83,11 +90,18 @@ class _addGamePopUpState extends State<addGamePopUp> {
                     String GameName = await User.joinGame(gameID: Userinput);
                     if (GameName != "") {
                       widget.updateGameID(Userinput);
+                      Navigator.of(context).pop();
                     } else {
                       print("Could not join");
+                      setState(() {
+                        errorText = "Could not join, check ID";
+                      });
                     }
                   } else {
                     print("Need to enter ID!");
+                    setState(() {
+                      errorText = "Need to enter ID!";
+                    });
                   }
                 },
         ),
