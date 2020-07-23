@@ -15,8 +15,9 @@ class Details extends StatelessWidget {
     players.forEach((key, value) {
       if (value["Alive"] == alive) {
         Tiles.add(Card(
-          color: Colors.deepOrange,
+          color: Color(0x000d98ba),
           child: ListTile(
+
             leading: Icon(Icons.person_outline),
             title: Text(key),
             subtitle: Text("Eliminations: ${value["kills"]}"),
@@ -59,7 +60,7 @@ class Details extends StatelessWidget {
           Expanded(
             flex: 4,
             child: cardListBlock(
-              title: "The living",
+              title: "Players",
               children:
                   getPlayerTiles(alive: true) + getPlayerTiles(alive: false),
             ),

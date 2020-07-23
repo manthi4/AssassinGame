@@ -57,12 +57,8 @@ class _addGamePopUpState extends State<addGamePopUp> {
         onChanged: (value) {
           Userinput = value;
         },
-        decoration: InputDecoration(
-          hintText: widget.create ? 'New Game Name' : 'Game ID',
-          contentPadding:
-              EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          errorText: errorText,
-        ),
+        decoration: TextFieldDecor.copyWith(hintText:  widget.create ? 'New Game Name' : 'Game ID',),
+
 
       ),
       actions: <Widget>[

@@ -11,8 +11,17 @@ import 'user.dart';
 //        borderRadius: BorderRadius.circular(10));
 //  }
 //}
-ShapeBorder roundyBox =
-    RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20)));
+
+const TextFieldDecor = InputDecoration(
+  hintText: 'Password',
+  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+);
+
+const roundyBox = RoundedRectangleBorder(
+  borderRadius: BorderRadius.all(
+    Radius.circular(20),
+  ),
+);
 
 BoxDecoration getBorder(Color color) {
   return BoxDecoration(
@@ -29,7 +38,7 @@ Color statuscolor(bool alive) {
   return alive ? Colors.green : Colors.red;
 }
 
-Widget getFace({bool alive, size = 60.0}) {
+Widget getFace({bool alive, size = 80.0}) {
   return alive
       ? Icon(
           Icons.sentiment_very_satisfied,

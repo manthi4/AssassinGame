@@ -77,16 +77,23 @@ class TargetBox extends StatelessWidget {
   final DocumentSnapshot gameData;
   TargetBox({@required this.gameData});
 
-  String displayText(String name, bool gameStarted, bool owner) {
+  Widget displayText(String name, bool gameStarted, bool owner) {
+    String words = "Target: ${name}";
     if (!gameStarted) {
       if (owner) {
-        return "Start Game";
+        words = "Start Game";
       } else {
-        return "Game not started";
+        words = "Game not started";
       }
-    } else {
-      return "Target: ${name}";
     }
+    return Text(
+      words,
+      style: TextStyle(
+          fontSize: 20,
+          color: gameStarted
+              ? Colors.green
+              : owner ? Colors.green : Colors.grey[700]),
+    );
   }
 
   @override
@@ -94,26 +101,29 @@ class TargetBox extends StatelessWidget {
     return StreamBuilder<DocumentSnapshot>(
       stream: User.playerDocStreamCreator(gameID: gameData.documentID),
       builder: (context, snapshot) {
+        if (!snapshot.data.exists) {
+          return Container();
+        }
         bool gameStarted = (snapshot.data.data["Targetname"] != "");
         bool owner = (gameData.data["GameCreator"] == User.userID());
 
         if (snapshot.data.exists) {
           ///If data doesn't exist the player is dead so nothing needs to display
           return RaisedButton(
-            color: gameStarted ? Colors.green : Colors.orange,
-            shape: gameStarted ? null : roundyBox,
-            disabledColor: gameStarted ? Colors.green : Colors.orange,
+            color: Colors.grey[900],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              side: BorderSide(
+                  color: gameStarted ? Colors.green : Colors.grey[700]),
+            ),
+            disabledColor: Colors.grey[900],
             disabledTextColor: Colors.white,
             child: SizedBox(
               height: 50.0,
               width: 200.0,
               child: Center(
-                child: Text(
-                  displayText(
-                      snapshot.data.data["Targetname"], gameStarted, owner),
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
+                  child: displayText(
+                      snapshot.data.data["Targetname"], gameStarted, owner)),
             ),
             onPressed: gameStarted
                 ? null

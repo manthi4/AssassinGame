@@ -6,7 +6,8 @@ import 'package:assassingame/constants.dart';
 class GamesPage extends StatelessWidget {
   final updateGameID;
   final GameName;
-  const GamesPage({@required this.updateGameID, @required this.GameName});
+  final bool alive;
+  const GamesPage({@required this.updateGameID, @required this.GameName, this.alive});
 
   List<Widget> getGameTiles({bool active}) {
     ///TODO: I wonder, would making this async be faster
@@ -16,13 +17,18 @@ class GamesPage extends StatelessWidget {
       if (value["Active"] == active) {
         Tiles.add(
           Card(
-            color: value["Owner"] ? Colors.yellow[700] : Colors.blueGrey[900],
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              side: BorderSide(color: (value["GameName"] == GameName)? statuscolor(value["Alive"]): Colors.black54),
+            ),
+            color: Colors.black54,
+            //(value["GameName"] == GameName) ? statuscolor(value["Alive"]): Colors.black, //Colors.blueGrey[900],
             child: ListTile(
               leading: Icon(Icons.games),
-              title: Text(value["GameName"]),
+              title: Text(value["GameName"],),
               trailing: getFace(alive: value["Alive"], size: 20.0),
               enabled: value["Active"],
-              selected: (value["GameName"] == GameName) ? true : false,
+              selected: value["Owner"] ? true : false,
               onTap: () {
                 updateGameID(key);
               },

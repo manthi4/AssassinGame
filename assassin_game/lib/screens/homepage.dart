@@ -254,6 +254,7 @@ class _HomePageState extends State<HomePage> {
                           GamesPage(
                             updateGameID: updateGameID,
                             GameName: snapshot.data.data["GameName"],
+                            alive: alive,
                           ),
                           clarifyname(
                             alive: alive,

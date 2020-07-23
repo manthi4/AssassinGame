@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'homepage.dart';
 import 'package:assassingame/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:assassingame/constants.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool loggingIn;
@@ -117,8 +118,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-const TextFieldDecor = InputDecoration(
-  hintText: 'Password',
-  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-);

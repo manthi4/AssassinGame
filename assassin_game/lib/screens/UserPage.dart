@@ -20,6 +20,44 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    Widget LogoutWidget = Column(
+      children: <Widget>[
+        IconButton(
+          iconSize: 30,
+          color: statusColor,
+          icon: Icon(Icons.exit_to_app),
+          tooltip: "Log out",
+          onPressed: () {
+            _auth.signOut();
+            Navigator.popUntil(context, ModalRoute.withName(WelcomePage.route));
+          },
+        ),
+        Text(
+          "Log out",
+          style: TextStyle(color: Colors.white),
+        )
+      ],
+    );
+//    widget ResetPassword = Column(
+//        children: <Widget>[
+//        IconButton(
+//        iconSize: 30,
+//        color: statusColor,
+//        icon: Icon(Icons.exit_to_app),
+//    tooltip: "Log out",
+//    onPressed: () {
+//    _auth.signOut();
+//    Navigator.popUntil(context, ModalRoute.withName(WelcomePage.route));
+//    },
+//    ),
+//    Text(
+//    "Log out",
+//    style: TextStyle(color: Colors.white),
+//    )
+//    ],
+//    );
     return Scaffold(
       body: Container(
         decoration: getBorder(statusColor),
@@ -29,95 +67,111 @@ class _UserPageState extends State<UserPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Expanded(
-                child: ListView(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.person,
-                        color: statusColor,
-                        size: 100,
-                      ),
+                  child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.person,
+                      color: statusColor,
+                      size: 100,
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.blue,
-                          width: 1,
-                        ),
-//                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.exit_to_app,
-                          color: statusColor,
-                        ),
-                        title: Text("Log out"),
-                        onTap: () {
-                          _auth.signOut();
-                          Navigator.popUntil(
-                              context, ModalRoute.withName(WelcomePage.route));
-                        },
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.blue,
-                          width: 1,
-                        ),
-//                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.security,
-                          color: statusColor,
-                        ),
-                        title: Text("Reset Password"),
-                        onTap: () {},
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.blue,
-                          width: 1,
-                        ),
-//                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.photo,
-                          color: statusColor,
-                        ),
-                        title: Text("Change Profile Picture"),
-                        onTap: () {},
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-//              Column(
-//                children: <Widget>[
-//                  IconButton(
-//                    iconSize: 30,
-//                    color: statusColor,
-//                    icon: Icon(Icons.exit_to_app),
-//                    tooltip: "Log out",
-//                    onPressed: () {
-//                      _auth.signOut();
-//                      Navigator.popUntil(
-//                          context, ModalRoute.withName(WelcomePage.route));
-//                    },
-//                  ),
-//                  Text(
-//                    "Log out",
-//                    style: TextStyle(color: Colors.grey[700]),
-//                  )
-//                ],
-//              ),
-
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      LogoutWidget,
+                      LogoutWidget,
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      LogoutWidget,
+                      LogoutWidget,
+                      LogoutWidget,
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      LogoutWidget,
+                      LogoutWidget,
+                    ],
+                  ),
+                ],
+              )
+//                ListView(
+//                  children: <Widget>[
+//                    Padding(
+//                      padding: const EdgeInsets.all(8.0),
+//                      child: Icon(
+//                        Icons.person,
+//                        color: statusColor,
+//                        size: 100,
+//                      ),
+//                    ),
+//                    Container(
+//                      decoration: BoxDecoration(
+//                        border: Border.all(
+//                          color: Colors.blue,
+//                          width: 1,
+//                        ),
+////                        borderRadius: BorderRadius.circular(10),
+//                      ),
+//                      child: ListTile(
+//                        leading: Icon(
+//                          Icons.exit_to_app,
+//                          color: statusColor,
+//                        ),
+//                        title: Text("Log out"),
+//                        onTap: () {
+//                          _auth.signOut();
+//                          Navigator.popUntil(
+//                              context, ModalRoute.withName(WelcomePage.route));
+//                        },
+//                      ),
+//                    ),
+//                    Container(
+//                      decoration: BoxDecoration(
+//                        border: Border.all(
+//                          color: Colors.blue,
+//                          width: 1,
+//                        ),
+////                        borderRadius: BorderRadius.circular(10),
+//                      ),
+//                      child: ListTile(
+//                        leading: Icon(
+//                          Icons.security,
+//                          color: statusColor,
+//                        ),
+//                        title: Text("Reset Password"),
+//                        onTap: () {},
+//                      ),
+//                    ),
+//                    Container(
+//                      decoration: BoxDecoration(
+//                        border: Border.all(
+//                          color: Colors.blue,
+//                          width: 1,
+//                        ),
+////                        borderRadius: BorderRadius.circular(10),
+//                      ),
+//                      child: ListTile(
+//                        leading: Icon(
+//                          Icons.photo,
+//                          color: statusColor,
+//                        ),
+//                        title: Text("Change Profile Picture"),
+//                        onTap: () {},
+//                      ),
+//                    ),
+//                  ],
+//                ),
+                  ),
               RaisedButton(
                 child: SizedBox(
                   width: double.maxFinite,
