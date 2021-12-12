@@ -33,7 +33,7 @@ class clarifyname extends StatelessWidget {
                   ),
                   Text(
                     alive ? 'Alive' : 'Eliminated',
-                    style: Theme.of(context).textTheme.display2,
+                    style: Theme.of(context).textTheme.headline2,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

@@ -10,6 +10,7 @@ import 'package:assassingame/constants.dart';
 
 class UserPage extends StatefulWidget {
   static final String route = "UserPage";
+
   @override
   _UserPageState createState() => _UserPageState();
 }
