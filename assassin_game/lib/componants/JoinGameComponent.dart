@@ -13,7 +13,6 @@ class JoinGameComp extends StatefulWidget {
 class _JoinGameCompState extends State<JoinGameComp> {
   String newGameID = "";
 
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -28,19 +27,19 @@ class _JoinGameCompState extends State<JoinGameComp> {
               decoration: InputDecoration(
                 hintText: 'Game ID',
                 contentPadding:
-                EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               ),
             ),
           ),
-          RaisedButton(
-            color: widget.statusColor,
+          ElevatedButton(
+            style: ButtonStyle(foregroundColor: widget.statusColor),
             child: Text("Join"),
             onPressed: () async {
               if (newGameID != "") {
                 String GameName = await User.joinGame(gameID: newGameID);
-                if(GameName != "") {
+                if (GameName != "") {
                   widget.updateGameID(newGameID);
-                }else{
+                } else {
                   print("Could not join");
                 }
               } else {

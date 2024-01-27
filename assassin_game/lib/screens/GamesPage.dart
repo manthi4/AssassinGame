@@ -1,13 +1,13 @@
 import 'package:assassingame/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:assassingame/user.dart';
-import 'package:assassingame/constants.dart';
 
 class GamesPage extends StatelessWidget {
   final updateGameID;
   final GameName;
   final bool alive;
-  const GamesPage({@required this.updateGameID, @required this.GameName, this.alive});
+  const GamesPage(
+      {@required this.updateGameID, @required this.GameName, this.alive});
 
   List<Widget> getGameTiles({bool active}) {
     ///TODO: I wonder, would making this async be faster
@@ -18,14 +18,19 @@ class GamesPage extends StatelessWidget {
         Tiles.add(
           Card(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              side: BorderSide(color: (value["GameName"] == GameName)? statuscolor(value["Alive"]): Colors.black54),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              side: BorderSide(
+                  color: (value["GameName"] == GameName)
+                      ? statuscolor(value["Alive"])
+                      : Colors.black54),
             ),
             color: Colors.black54,
             //(value["GameName"] == GameName) ? statuscolor(value["Alive"]): Colors.black, //Colors.blueGrey[900],
             child: ListTile(
               leading: Icon(Icons.games),
-              title: Text(value["GameName"],),
+              title: Text(
+                value["GameName"],
+              ),
               trailing: getFace(alive: value["Alive"], size: 20.0),
               enabled: value["Active"],
               selected: value["Owner"] ? true : false,
@@ -39,8 +44,6 @@ class GamesPage extends StatelessWidget {
     });
     return Tiles;
   }
-
-
 
   @override
   Widget build(BuildContext context) {

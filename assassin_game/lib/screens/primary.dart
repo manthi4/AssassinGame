@@ -33,7 +33,7 @@ class clarifyname extends StatelessWidget {
                   ),
                   Text(
                     alive ? 'Alive' : 'Eliminated',
-                    style: Theme.of(context).textTheme.headline2,
+                    style: Theme.of(context).textTheme.displayMedium,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -78,7 +78,7 @@ class TargetBox extends StatelessWidget {
   TargetBox({@required this.gameData});
 
   Widget displayText(String name, bool gameStarted, bool owner) {
-    String words = "Target: ${name}";
+    String words = "Target: $name";
     if (!gameStarted) {
       if (owner) {
         words = "Start Game";
@@ -92,7 +92,9 @@ class TargetBox extends StatelessWidget {
           fontSize: 20,
           color: gameStarted
               ? Colors.green
-              : owner ? Colors.green : Colors.grey[700]),
+              : owner
+                  ? Colors.green
+                  : Colors.grey[700]),
     );
   }
 
@@ -109,15 +111,25 @@ class TargetBox extends StatelessWidget {
 
         if (snapshot.data.exists) {
           ///If data doesn't exist the player is dead so nothing needs to display
-          return RaisedButton(
-            color: Colors.grey[900],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              side: BorderSide(
-                  color: gameStarted ? Colors.green : Colors.grey[700]),
+          return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.grey.shade900,
+              disabledForegroundColor: Colors.grey.shade900,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                side: BorderSide(
+                    color: gameStarted ? Colors.green : Colors.grey[700]),
+              ),
             ),
-            disabledColor: Colors.grey[900],
-            disabledTextColor: Colors.white,
+
+            // color: Colors.grey[900],
+            // shape: RoundedRectangleBorder(
+            //   borderRadius: BorderRadius.all(Radius.circular(10)),
+            //   side: BorderSide(
+            //       color: gameStarted ? Colors.green : Colors.grey[700]),
+            // ),
+            // disabledColor: Colors.grey[900],
+            // disabledTextColor: Colors.white,
             child: SizedBox(
               height: 50.0,
               width: 200.0,

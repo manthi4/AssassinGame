@@ -1,12 +1,8 @@
-import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:assassingame/user.dart';
 import 'package:assassingame/constants.dart';
 import 'welcomPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:assassingame/constants.dart';
 
 class UserPage extends StatefulWidget {
   static final String route = "UserPage";
@@ -21,8 +17,6 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
-
-
     Widget LogoutWidget = Column(
       children: <Widget>[
         IconButton(
@@ -173,7 +167,7 @@ class _UserPageState extends State<UserPage> {
 //                  ],
 //                ),
                   ),
-              RaisedButton(
+              ElevatedButton(
                 child: SizedBox(
                   width: double.maxFinite,
                   height: 60.0,
@@ -181,7 +175,8 @@ class _UserPageState extends State<UserPage> {
                     child: Text("GO BACK"),
                   ),
                 ),
-                color: Colors.blue,
+                style: ElevatedButton.styleFrom(foregroundColor: Colors.blue),
+                // color: Colors.blue,
                 onPressed: () {
                   Navigator.pop(context);
                 },

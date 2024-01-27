@@ -20,7 +20,8 @@ class BigButton extends StatelessWidget {
           minWidth: 200.0,
           height: 42.0,
           child: Text(
-            buttonText, style: TextStyle(fontSize: 20, color: Colors.white),
+            buttonText,
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         ),
       ),

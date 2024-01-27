@@ -3,9 +3,6 @@ import 'package:assassingame/componants/bigButton.dart';
 import 'package:assassingame/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'homepage.dart';
-import 'package:assassingame/user.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:assassingame/constants.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool loggingIn;
@@ -23,8 +20,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void login() async {
     try {
-      final user = await _auth.signInWithEmailAndPassword(///TODO: Before release, need to verify emails are real
-          email: email, password: password);
+      final user = await _auth.signInWithEmailAndPassword(
+
+          ///TODO: Before release, need to verify emails are real
+          email: email,
+          password: password);
       if (user != null) {
         await User.initialize();
         Navigator.pushNamed(context, HomePage.route);
@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
           email: email, password: password);
       if (user != null) {
         await _fstore.collection("Users").document(user.user.uid).setData({
-          "Email" : user.user.email,
+          "Email": user.user.email,
           "Games": {},
           "Username": userName,
         }).then((value) async {

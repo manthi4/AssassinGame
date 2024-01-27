@@ -1,26 +1,31 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../user.dart';
 import '../constants.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:assassingame/componants/bigButton.dart';
 import 'loginScreen.dart';
 import 'homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:assassingame/user.dart';
 
 class WelcomePage extends StatelessWidget {
   static final route = "welcome";
   final _auth = FirebaseAuth.instance;
 
-  void checkStatus(context)async{
+  void checkStatus(context) async {
     final user = await _auth.currentUser();
-    if(user != null){
+    if (user != null) {
       print("User already logged in");
       await User.initialize();
       Navigator.pushNamed(context, HomePage.route);
     }
   }
+  // void checkStatus(context)async{
+  //   final user = await _auth.currentUser();
+  //   if(user != null){
+  //     print("User already logged in");
+  //     await User.initialize();
+  //     Navigator.pushNamed(context, HomePage.route);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +48,9 @@ class WelcomePage extends StatelessWidget {
                     size: 60,
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 TextLiquidFill(
                   text: "Assassin",
                   waveColor: Colors.purpleAccent,
@@ -56,16 +63,26 @@ class WelcomePage extends StatelessWidget {
                 ),
                 BigButton(
                   buttonText: "Login",
-                  onClick: (){
+                  onClick: () {
                     print("tried to login");
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen(loggingIn: true,)));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LoginScreen(
+                                  loggingIn: true,
+                                )));
                   },
                 ),
                 BigButton(
                   buttonText: "Register",
                   onClick: () {
                     print("tried to Register");
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen(loggingIn: false,)));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LoginScreen(
+                                  loggingIn: false,
+                                )));
                   },
                 )
               ]),

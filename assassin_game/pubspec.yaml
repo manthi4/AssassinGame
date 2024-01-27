@@ -4,21 +4,21 @@ description: An app to easily manage the game Assassin without the need for a ga
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ^2.2.0
 
 dependencies:
   flutter:
     sdk: flutter
-  animated_text_kit: ^2.2.0
-  firebase_core: ^0.4.5
-  firebase_auth: ^0.16.1
-  cloud_firestore: ^0.13.6
-  sliding_up_panel: ^1.0.2
-  cross_local_storage: ^1.1.0
-  cloud_functions: ^0.5.0
-  image_picker: ^0.6.7+2
-  firebase_storage: ^3.1.6
-  http: ^0.12.1
+  animated_text_kit: ^4.2.2
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.16.0
+  cloud_firestore: ^4.14.0
+  sliding_up_panel: ^2.0.0+1
+  cross_local_storage: ^2.0.1
+  cloud_functions: ^4.6.0
+  image_picker: ^1.0.4
+  firebase_storage: ^11.6.0
+  http: ^0.13.6
 
 
 dev_dependencies:

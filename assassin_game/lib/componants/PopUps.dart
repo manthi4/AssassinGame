@@ -29,7 +29,8 @@ class PopUps {
   }
 }
 
-class addGamePopUp extends StatefulWidget {///TODO: if the user makes a mistake (ex: blank name) show a hint in red text.
+class addGamePopUp extends StatefulWidget {
+  ///TODO: if the user makes a mistake (ex: blank name) show a hint in red text.
   final updateGameID;
   final Color statusColor;
   final bool create;
@@ -45,28 +46,29 @@ class addGamePopUp extends StatefulWidget {///TODO: if the user makes a mistake 
 
 class _addGamePopUpState extends State<addGamePopUp> {
   String Userinput = "";
-  String errorText = null;
+  String errorText;
   @override
-
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: roundyBox,
       title: Text(widget.create ? "Create Game" : "Join Game"),
-
       content: TextField(
         onChanged: (value) {
           Userinput = value;
         },
-        decoration: TextFieldDecor.copyWith(hintText:  widget.create ? 'New Game Name' : 'Game ID',),
-
-
+        decoration: TextFieldDecor.copyWith(
+          hintText: widget.create ? 'New Game Name' : 'Game ID',
+        ),
       ),
       actions: <Widget>[
-        RaisedButton(
-          color: widget.statusColor,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20))
-          ),
+        ElevatedButton(
+          style: ButtonStyle(
+              // color: widget.statusColor,
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20))))),
+          // color: widget.statusColor,
+          // shape: RoundedRectangleBorder(
+          // borderRadius: BorderRadius.all(Radius.circular(20))),
           child: Text(widget.create ? "Create" : "Join"),
           onPressed: widget.create
               ? () async {

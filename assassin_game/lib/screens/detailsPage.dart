@@ -17,7 +17,6 @@ class Details extends StatelessWidget {
         Tiles.add(Card(
           color: Color(0x000d98ba),
           child: ListTile(
-
             leading: Icon(Icons.person_outline),
             title: Text(key),
             subtitle: Text("Eliminations: ${value["kills"]}"),

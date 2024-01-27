@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/homepage.dart';
 import 'screens/UserPage.dart';
 import 'package:assassingame/screens/welcomPage.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -13,12 +14,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.dark(),
       initialRoute: WelcomePage.route,
       routes: {
-        HomePage.route :(context) => HomePage(),
-        UserPage.route : (context) => UserPage(),
-        WelcomePage.route:(context)=>WelcomePage(),
+        HomePage.route: (context) => HomePage(),
+        UserPage.route: (context) => UserPage(),
+        WelcomePage.route: (context) => WelcomePage(),
       },
     );
   }
 }
-
-

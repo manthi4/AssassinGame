@@ -1,4 +1,3 @@
-import 'package:assassingame/screens/loginScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -57,7 +56,8 @@ class User {
   static String userName() {
     return _userData["Username"];
   }
-  static String userID(){
+
+  static String userID() {
     return _userID;
   }
 
@@ -107,7 +107,7 @@ class User {
 
   static Future<String> getSelectedGameID() async {
     LocalStorageInterface onDevice = await LocalStorage.getInstance();
-    String ID = await onDevice.getString("LastActiveG") ?? "";
+    String ID = onDevice.getString("LastActiveG") ?? "";
     List activeGames = _userData["Games"].keys.toList();
     if (_userData["Games"].keys.toList().contains(ID)) {
       return ID;
@@ -150,8 +150,7 @@ class User {
     /// Adds the game to the Users list of games
     await _fstore.collection("Users").document(_userID).setData({
       "Games": {
-        newGameDocRef.documentID.toString()
-            : {
+        newGameDocRef.documentID.toString(): {
           "GameName": "$gameName",
           "Active": true,
           "Alive": true,
@@ -207,11 +206,12 @@ class User {
       newGameName = value.data["GameName"];
       _fstore.collection("Users").document(_userID).setData({
         "Games": {
-          gameID.toString()
-              : {
+          gameID.toString(): {
             "GameName": value.data["GameName"],
             "Active": true,
-            "Alive": true, ///TODO: need to update the kill cloud function to set this to false in the Target's user doc
+            "Alive": true,
+
+            ///TODO: need to update the kill cloud function to set this to false in the Target's user doc
             "Owner": false,
           },
         },
@@ -227,7 +227,8 @@ class User {
     return newGameName;
   }
 
-  static Future<void> eliminateTarget({@required gameID}) async { ///TODO: set the value of Alive to false in the Target's User Doc
+  static Future<void> eliminateTarget({@required gameID}) async {
+    ///TODO: set the value of Alive to false in the Target's User Doc
     ///TODO: Make a cloud function that checks if there is anyone still alive, if not then mark the game as inactive in everyone's user doc
     //TODO: set target to "claimed elimination" in database
 
@@ -239,7 +240,8 @@ class User {
   }
 
   static Future<void> startGame({@required gameID}) async {
-    var url = "https://us-central1-assassingame-c59a6.cloudfunctions.net/setTargets?gameid=${gameID}";
+    var url =
+        "https://us-central1-assassingame-c59a6.cloudfunctions.net/setTargets?gameid=$gameID";
     var response = await post(url);
     print("response was: ${response.body.toString()}");
   }

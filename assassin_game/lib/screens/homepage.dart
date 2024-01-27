@@ -12,7 +12,6 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:assassingame/componants/SelectGamePagelet.dart';
 import 'package:assassingame/componants/PopUps.dart';
 import 'primary.dart';
-import 'package:assassingame/screens/detailsPage.dart';
 import 'GamesPage.dart';
 
 class HomePage extends StatefulWidget {
@@ -75,7 +74,8 @@ class _HomePageState extends State<HomePage> {
 //          }
 
             bool alive =
-                snapshot.data.data["PlayerStatus"][User.userName()]["Alive"];
+                snapshot.data.get("PlayerStatus")[User.userName()]["Alive"];
+            // snapshot.data.data["PlayerStatus"][User.userName()]["Alive"];
             Color statusColor = statuscolor(alive);
 
             ///            PickedFile file; ///Made this a State variable instead

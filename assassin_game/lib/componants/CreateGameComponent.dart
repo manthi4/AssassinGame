@@ -4,7 +4,8 @@ import 'package:assassingame/user.dart';
 class CreateGameComp extends StatefulWidget {
   final updateGameID;
   final statusColor;
-  CreateGameComp({@required this.updateGameID, this.statusColor = Colors.purple});
+  CreateGameComp(
+      {@required this.updateGameID, this.statusColor = Colors.purple});
 
   @override
   _CreateGameCompState createState() => _CreateGameCompState();
@@ -12,7 +13,6 @@ class CreateGameComp extends StatefulWidget {
 
 class _CreateGameCompState extends State<CreateGameComp> {
   String newGameName = "";
-
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +32,8 @@ class _CreateGameCompState extends State<CreateGameComp> {
               ),
             ),
           ),
-          RaisedButton(
-            color: widget.statusColor,
+          ElevatedButton(
+            style: ButtonStyle(foregroundColor: widget.statusColor),
             child: Text("Create"),
             onPressed: () async {
               if (newGameName != "") {
